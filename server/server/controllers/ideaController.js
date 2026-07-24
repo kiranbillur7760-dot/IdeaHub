@@ -16,11 +16,8 @@ export const createIdea = async (req, res) => {
     });
 
     res.status(201).json(idea);
-
   } catch (error) {
-    res.status(500).json({
-      message: error.message,
-    });
+    res.status(500).json({ message: error.message });
   }
 };
 
@@ -29,11 +26,54 @@ export const createIdea = async (req, res) => {
 // =========================
 export const getIdeas = async (req, res) => {
   try {
-    const ideas = await Idea.find().sort({
-      createdAt: -1,
-    });
+    const ideas = await Idea.find().sort({ createdAt: -1 });
 
     res.json(ideas);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// =========================
+// Get My Ideas
+// =========================
+export const getMyIdeas = async (req, res) => {
+  try {
+    const ideas = await Idea.find({
+      userId: req.user._id,
+    }).sort({ createdAt: -1 });
+
+    res.json(ideas);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// =========================
+// Delete Idea
+// =========================
+export const deleteIdea = async (req, res) => {
+  try {
+    const idea = await Idea.findById(req.params.id);
+
+    if (!idea) {
+      return res.status(404).json({
+        message: "Idea not found",
+      });
+    }
+
+    // Only owner can delete
+    if (idea.userId.toString() !== req.user._id.toString()) {
+      return res.status(403).json({
+        message: "Not authorized",
+      });
+    }
+
+    await Idea.findByIdAndDelete(req.params.id);
+
+    res.json({
+      message: "Idea deleted successfully",
+    });
 
   } catch (error) {
     res.status(500).json({
