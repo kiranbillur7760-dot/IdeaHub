@@ -4,6 +4,7 @@ import {
   createIdea,
   getIdeas,
   getMyIdeas,
+  updateIdea,
   deleteIdea,
 } from "../controllers/ideaController.js";
 
@@ -16,6 +17,8 @@ router.post("/", authMiddleware, createIdea);
 router.get("/", getIdeas);
 
 router.get("/myideas", authMiddleware, getMyIdeas);
+
+router.put("/:id", authMiddleware, updateIdea);
 
 router.delete("/:id", authMiddleware, deleteIdea);
 

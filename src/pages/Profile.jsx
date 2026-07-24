@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import API from "../services/api";
 
@@ -141,9 +142,12 @@ function Profile() {
 
                   <div className="flex gap-3">
 
-                    <button className="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600">
-                      Edit
-                    </button>
+                    <Link
+  to={`/edit-idea/${idea._id}`}
+  className="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600"
+>
+  Edit
+</Link>
 
                     <button
   onClick={() => deleteIdea(idea._id)}

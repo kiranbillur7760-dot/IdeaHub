@@ -50,6 +50,39 @@ export const getMyIdeas = async (req, res) => {
 };
 
 // =========================
+// Update Idea
+// =========================
+export const updateIdea = async (req, res) => {
+  try {
+    const idea = await Idea.findById(req.params.id);
+
+    if (!idea) {
+      return res.status(404).json({
+        message: "Idea not found",
+      });
+    }
+
+    if (idea.userId.toString() !== req.user._id.toString()) {
+      return res.status(403).json({
+        message: "Not authorized",
+      });
+    }
+
+    const updatedIdea = await Idea.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true }
+    );
+
+    res.json(updatedIdea);
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+
+// =========================
 // Delete Idea
 // =========================
 export const deleteIdea = async (req, res) => {
@@ -62,7 +95,6 @@ export const deleteIdea = async (req, res) => {
       });
     }
 
-    // Only owner can delete
     if (idea.userId.toString() !== req.user._id.toString()) {
       return res.status(403).json({
         message: "Not authorized",
@@ -74,7 +106,6 @@ export const deleteIdea = async (req, res) => {
     res.json({
       message: "Idea deleted successfully",
     });
-
   } catch (error) {
     res.status(500).json({
       message: error.message,

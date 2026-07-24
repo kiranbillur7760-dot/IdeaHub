@@ -1,5 +1,5 @@
 import { Routes, Route } from "react-router-dom";
-
+import EditIdea from "./pages/EditIdea";
 import Navbar from "./components/Navbar";
 
 import Home from "./pages/Home";
@@ -18,7 +18,7 @@ function App() {
 
       <Routes>
         <Route path="/" element={<Home />} />
-
+        <Route path="/edit-idea/:id" element={<EditIdea />} />
         <Route path="/explore" element={<Explore />} />
 
         <Route path="/login" element={<Login />} />
