@@ -3,49 +3,127 @@ import Idea from "../models/Idea.js";
 // =========================
 // Create Idea
 // =========================
+// =========================
+// Create Idea
+// =========================
 export const createIdea = async (req, res) => {
   try {
+    console.log("========== CREATE IDEA ==========");
+    console.log("Body:", req.body);
+    console.log("File:", req.file);
+    console.log("User:", req.user);
+
     const { title, description, category } = req.body;
 
     const idea = await Idea.create({
       title,
       description,
       category,
+      image: req.file ? req.file.path : "",
       author: req.user.name,
       userId: req.user._id,
     });
 
+    console.log("Idea Created Successfully");
+
     res.status(201).json(idea);
+
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.log("========== CREATE ERROR ==========");
+    console.error(error);
+
+    res.status(500).json({
+      message: error.message,
+    });
   }
 };
-
 // =========================
 // Get All Ideas
 // =========================
 export const getIdeas = async (req, res) => {
   try {
-    const ideas = await Idea.find().sort({ createdAt: -1 });
+    const ideas = await Idea.find().sort({
+      createdAt: -1,
+    });
 
     res.json(ideas);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({
+      message: error.message,
+    });
   }
 };
 
 // =========================
-// Get My Ideas
+// Get Trending Ideas
+// =========================
+export const getTrendingIdeas = async (req, res) => {
+  try {
+    const ideas = await Idea.find();
+
+    // Sort by number of likes (highest first)
+    ideas.sort((a, b) => b.likes.length - a.likes.length);
+
+    res.json(ideas);
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+// =========================
+// Search Ideas
+// =========================
+// =========================
+// Search + Category Filter
+// =========================
+export const searchIdeas = async (req, res) => {
+  try {
+    const { keyword, category } = req.query;
+
+    let filter = {};
+
+    if (keyword) {
+      filter.title = {
+        $regex: keyword,
+        $options: "i",
+      };
+    }
+
+    if (category && category !== "All") {
+      filter.category = category;
+    }
+
+    const ideas = await Idea.find(filter).sort({
+      createdAt: -1,
+    });
+
+    res.json(ideas);
+
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+
+
+// =========================
+// Get Logged-in User Ideas
 // =========================
 export const getMyIdeas = async (req, res) => {
   try {
     const ideas = await Idea.find({
       userId: req.user._id,
-    }).sort({ createdAt: -1 });
+    }).sort({
+      createdAt: -1,
+    });
 
     res.json(ideas);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({
+      message: error.message,
+    });
   }
 };
 
@@ -70,8 +148,14 @@ export const updateIdea = async (req, res) => {
 
     const updatedIdea = await Idea.findByIdAndUpdate(
       req.params.id,
-      req.body,
-      { new: true }
+      {
+        title: req.body.title,
+        description: req.body.description,
+        category: req.body.category,
+      },
+      {
+        new: true,
+      }
     );
 
     res.json(updatedIdea);
@@ -107,6 +191,106 @@ export const deleteIdea = async (req, res) => {
       message: "Idea deleted successfully",
     });
   } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+
+// =========================
+// Like / Unlike Idea
+// =========================
+export const likeIdea = async (req, res) => {
+  try {
+    const idea = await Idea.findById(req.params.id);
+
+    if (!idea) {
+      return res.status(404).json({
+        message: "Idea not found",
+      });
+    }
+
+    const userId = req.user._id.toString();
+
+    const alreadyLiked = idea.likes.some(
+      (id) => id.toString() === userId
+    );
+
+    if (alreadyLiked) {
+      idea.likes = idea.likes.filter(
+        (id) => id.toString() !== userId
+      );
+    } else {
+      idea.likes.push(req.user._id);
+    }
+
+    await idea.save();
+
+    res.json({
+      message: alreadyLiked
+        ? "Idea unliked successfully"
+        : "Idea liked successfully",
+      likes: idea.likes.length,
+      liked: !alreadyLiked,
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+// ==========================
+// Report Idea
+// ==========================
+export const reportIdea = async (req, res) => {
+  try {
+    const { reason } = req.body;
+    const ideaId = req.params.id;
+
+    // Check reason
+    if (!reason || !reason.trim()) {
+      return res.status(400).json({
+        message: "Please provide a reason",
+      });
+    }
+
+    // Find idea
+    const idea = await Idea.findById(ideaId);
+
+    if (!idea) {
+      return res.status(404).json({
+        message: "Idea not found",
+      });
+    }
+
+    // Check if current user already reported this idea
+    const alreadyReported = idea.reports.some(
+      (report) =>
+        report.userId.toString() === req.user._id.toString()
+    );
+
+    if (alreadyReported) {
+      return res.status(400).json({
+        message: "You have already reported this idea",
+      });
+    }
+
+    // Add report
+    idea.reports.push({
+      userId: req.user._id,
+      reason: reason.trim(),
+    });
+
+    await idea.save();
+
+    res.status(201).json({
+      message: "Idea reported successfully",
+    });
+
+  } catch (error) {
+    console.error("REPORT IDEA ERROR:", error);
+
     res.status(500).json({
       message: error.message,
     });

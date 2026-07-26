@@ -5,44 +5,46 @@ import API from "../services/api";
 function CreateIdea() {
   const navigate = useNavigate();
 
-  const [idea, setIdea] = useState({
-    title: "",
-    description: "",
-    category: "",
-  });
-
-  const handleChange = (e) => {
-    setIdea({
-      ...idea,
-      [e.target.name]: e.target.value,
-    });
-  };
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [category, setCategory] = useState("Technology");
+  const [image, setImage] = useState(null);
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    try {
-      const token = localStorage.getItem("token");
+  try {
+    const token = localStorage.getItem("token");
 
-      await API.post("/ideas", idea, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+    const formData = new FormData();
 
-      alert("🎉 Idea Created Successfully!");
+    formData.append("title", title);
+    formData.append("description", description);
+    formData.append("category", category);
 
-      navigate("/");
-    } catch (err) {
-      console.error(err);
-
-      alert(err.response?.data?.message || "Failed to create idea");
+    if (image) {
+      formData.append("image", image);
     }
-  };
+
+    await API.post("/ideas", formData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    alert("Idea created successfully!");
+    navigate("/explore");
+
+  } catch (err) {
+    console.error(err.response?.data || err);
+    alert("Failed to create idea.");
+  }
+};
 
   return (
-    <div className="max-w-2xl mx-auto mt-10 bg-white shadow-lg rounded-xl p-8">
-      <h1 className="text-3xl font-bold mb-8 text-center">
+    <div className="max-w-2xl mx-auto mt-10 bg-white p-8 rounded-xl shadow-lg">
+
+      <h1 className="text-3xl font-bold mb-6 text-center">
         Create New Idea
       </h1>
 
@@ -50,48 +52,52 @@ function CreateIdea() {
 
         <input
           type="text"
-          name="title"
           placeholder="Idea Title"
-          className="w-full border p-3 rounded-lg"
-          value={idea.title}
-          onChange={handleChange}
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          className="w-full border rounded-lg p-3"
           required
         />
 
         <textarea
-          name="description"
           placeholder="Describe your idea..."
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          className="w-full border rounded-lg p-3"
           rows="5"
-          className="w-full border p-3 rounded-lg"
-          value={idea.description}
-          onChange={handleChange}
           required
         />
 
         <select
-          name="category"
-          className="w-full border p-3 rounded-lg"
-          value={idea.category}
-          onChange={handleChange}
-          required
+          value={category}
+          onChange={(e) => setCategory(e.target.value)}
+          className="w-full border rounded-lg p-3"
         >
-          <option value="">Select Category</option>
-          <option value="Technology">Technology</option>
-          <option value="Education">Education</option>
-          <option value="Health">Health</option>
-          <option value="Startup">Startup</option>
-          <option value="Environment">Environment</option>
-          <option value="AI">AI</option>
+          <option>Technology</option>
+          <option>Education</option>
+          <option>Health</option>
+          <option>Business</option>
+          <option>Environment</option>
+          <option>Finance</option>
+          <option>AI</option>
         </select>
+
+        <input
+          type="file"
+          accept="image/*"
+          onChange={(e) => setImage(e.target.files[0])}
+          className="w-full"
+        />
 
         <button
           type="submit"
           className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700"
         >
-          Publish Idea 🚀
+          Post Idea
         </button>
 
       </form>
+
     </div>
   );
 }

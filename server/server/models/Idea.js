@@ -18,28 +18,59 @@ const ideaSchema = new mongoose.Schema(
       required: true,
     },
 
-    // User who created the idea
+    image: {
+      type: String,
+      default: "",
+    },
+
+    author: {
+      type: String,
+      default: "Anonymous",
+    },
+
     userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
     },
 
-    author: {
-      type: String,
-      required: true,
-    },
+    // ❤️ Users who liked this idea
+    likes: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
 
-    likes: {
-      type: Number,
-      default: 0,
-    },
-
+    // 💬 Number of comments
     comments: {
       type: Number,
       default: 0,
     },
+
+    // 🚩 Users who reported this idea
+    reports: [
+      {
+        userId: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "User",
+          required: true,
+        },
+
+        reason: {
+          type: String,
+          required: true,
+        },
+
+        createdAt: {
+          type: Date,
+          default: Date.now,
+        },
+      },
+    ],
   },
+
+  // Schema options
   {
     timestamps: true,
   }

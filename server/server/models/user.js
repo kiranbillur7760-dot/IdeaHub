@@ -17,6 +17,12 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    savedIdeas: [
+  {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Idea",
+  },
+],
 
     bio: {
       type: String,

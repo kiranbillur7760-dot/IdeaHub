@@ -4,7 +4,14 @@ function Navbar() {
   const navigate = useNavigate();
 
   const token = localStorage.getItem("token");
-  const user = JSON.parse(localStorage.getItem("user"));
+
+  let user = null;
+
+  try {
+    user = JSON.parse(localStorage.getItem("user"));
+  } catch (error) {
+    console.error("Invalid user data");
+  }
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -18,66 +25,142 @@ function Navbar() {
   };
 
   return (
-    <nav className="bg-white shadow-md">
-      <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+    <nav className="bg-white border-b shadow-sm sticky top-0 z-50">
 
-        <Link to="/">
-          <h1 className="text-3xl font-bold text-blue-600">
-            IdeaHub
-          </h1>
-        </Link>
+      <div className="max-w-7xl mx-auto px-6">
 
-        <ul className="flex gap-8 items-center font-medium">
+        <div className="h-16 flex items-center justify-between">
 
-          <li>
-            <Link to="/">Home</Link>
-          </li>
+          {/* ========================= */}
+          {/* Logo */}
+          {/* ========================= */}
 
-          <li>
-            <Link to="/explore">Explore</Link>
-          </li>
+          <Link
+            to="/"
+            className="flex items-center gap-2"
+          >
+            <span className="text-3xl">
+              💡
+            </span>
 
-          {token ? (
-            <>
-              <li>
-                <Link to="/create-idea">Create Idea</Link>
-              </li>
+            <span className="text-2xl font-bold text-blue-600">
+              IdeaHub
+            </span>
+          </Link>
 
-              <li>
-                <Link to="/profile">
-                  {user?.name || "Profile"}
+
+          {/* ========================= */}
+          {/* Navigation Icons */}
+          {/* ========================= */}
+
+          <div className="flex items-center gap-2">
+
+            {/* Home */}
+            <Link
+              to="/"
+              title="Home"
+              className="w-11 h-11 flex items-center justify-center rounded-xl text-2xl hover:bg-blue-50 hover:text-blue-600 transition"
+            >
+              🏠
+            </Link>
+
+
+            {/* Explore */}
+            <Link
+              to="/explore"
+              title="Explore Ideas"
+              className="w-11 h-11 flex items-center justify-center rounded-xl text-2xl hover:bg-blue-50 hover:text-blue-600 transition"
+            >
+              🔍
+            </Link>
+
+
+            {/* Trending */}
+            <Link
+              to="/trending"
+              title="Trending Ideas"
+              className="w-11 h-11 flex items-center justify-center rounded-xl text-2xl hover:bg-orange-50 transition"
+            >
+              🔥
+            </Link>
+
+
+            {token ? (
+              <>
+
+                {/* Saved Ideas */}
+                <Link
+                  to="/saved"
+                  title="Saved Ideas"
+                  className="w-11 h-11 flex items-center justify-center rounded-xl text-2xl hover:bg-yellow-50 transition"
+                >
+                  🔖
                 </Link>
-              </li>
 
-              <li>
+
+                {/* Create Idea */}
+                <Link
+                  to="/create-idea"
+                  title="Create Idea"
+                  className="w-11 h-11 flex items-center justify-center rounded-xl text-2xl hover:bg-green-50 transition"
+                >
+                  ➕
+                </Link>
+
+
+                {/* Profile */}
+                <Link
+                  to="/profile"
+                  title="Profile"
+                  className="w-11 h-11 flex items-center justify-center rounded-full bg-blue-600 text-white font-bold text-lg hover:bg-blue-700 transition"
+                >
+                  {user?.name
+                    ? user.name.charAt(0).toUpperCase()
+                    : "👤"}
+                </Link>
+
+
+                {/* Logout */}
                 <button
                   onClick={handleLogout}
-                  className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600"
+                  title="Logout"
+                  className="w-11 h-11 flex items-center justify-center rounded-xl text-2xl hover:bg-red-50 transition"
                 >
-                  Logout
+                  🚪
                 </button>
-              </li>
-            </>
-          ) : (
-            <>
-              <li>
-                <Link to="/login">Login</Link>
-              </li>
 
-              <li>
+              </>
+            ) : (
+              <>
+
+                {/* Login */}
+                <Link
+                  to="/login"
+                  title="Login"
+                  className="w-11 h-11 flex items-center justify-center rounded-xl text-2xl hover:bg-blue-50 transition"
+                >
+                  🔑
+                </Link>
+
+
+                {/* Register */}
                 <Link
                   to="/register"
-                  className="bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700"
+                  title="Register"
+                  className="w-11 h-11 flex items-center justify-center rounded-xl text-2xl hover:bg-green-50 transition"
                 >
-                  Sign Up
+                  📝
                 </Link>
-              </li>
-            </>
-          )}
 
-        </ul>
+              </>
+            )}
+
+          </div>
+
+        </div>
 
       </div>
+
     </nav>
   );
 }
