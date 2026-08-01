@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: "http://127.0.0.1:5000/api",
+  baseURL: "https://ideahub-4-ybrb.onrender.com/api",
 });
 
 export default API;

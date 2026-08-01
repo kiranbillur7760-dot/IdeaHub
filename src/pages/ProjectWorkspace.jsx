@@ -89,12 +89,12 @@ const ProjectWorkspace = () => {
       setError("");
 
       const projectResponse = await axios.get(
-        `http://localhost:5000/api/projects/${projectId}`,
+        https://ideahub-4-ybrb.onrender.com/api/projects/${projectId}`,
         authConfig
       );
 
       const tasksResponse = await axios.get(
-        `http://localhost:5000/api/tasks/${projectId}`,
+        `https://ideahub-4-ybrb.onrender.com/api/tasks/${projectId}`,
         authConfig
       );
 
@@ -119,7 +119,7 @@ const ProjectWorkspace = () => {
   const fetchUsers = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:5000/api/users/",
+        "https://ideahub-4-ybrb.onrender.com/api/users/",
         authConfig
       );
 
@@ -143,7 +143,7 @@ const ProjectWorkspace = () => {
       setLoadingActivities(true);
 
       const response = await axios.get(
-        `http://localhost:5000/api/activities/${projectId}`,
+        `https://ideahub-4-ybrb.onrender.com/api/activities/${projectId}`,
         authConfig
       );
 
@@ -204,7 +204,7 @@ const ProjectWorkspace = () => {
       setAddingMember(true);
 
       await axios.post(
-        `http://localhost:5000/api/projects/${projectId}/members`,
+        `https://ideahub-4-ybrb.onrender.com/api/projects/${projectId}/members`,
         {
           userId: selectedUserId,
         },
@@ -244,7 +244,7 @@ const ProjectWorkspace = () => {
       setRemovingMember(userId);
 
       await axios.delete(
-        `http://localhost:5000/api/projects/${projectId}/members/${userId}`,
+        `https://ideahub-4-ybrb.onrender.com/api/projects/${projectId}/members/${userId}`,
         authConfig
       );
 
@@ -290,7 +290,7 @@ const ProjectWorkspace = () => {
       setCreatingTask(true);
 
       await axios.post(
-        "http://localhost:5000/api/tasks",
+        "https://ideahub-4-ybrb.onrender.com/api/tasks",
         {
           projectId,
           title: taskData.title,
@@ -334,7 +334,7 @@ const ProjectWorkspace = () => {
       setUpdatingTask(true);
 
       await axios.put(
-        `http://localhost:5000/api/tasks/${taskId}`,
+        `https://ideahub-4-ybrb.onrender.com/api/tasks/${taskId}`,
         updates,
         authConfig
       );
@@ -371,7 +371,7 @@ const ProjectWorkspace = () => {
       setDeletingTask(taskId);
 
       await axios.delete(
-        `http://localhost:5000/api/tasks/${taskId}`,
+        `https://ideahub-4-ybrb.onrender.com/api/tasks/${taskId}`,
         authConfig
       );
 
