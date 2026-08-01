@@ -44,3 +44,23 @@ export const updateProfile = async (req, res) => {
     });
   }
 };
+// ==========================
+// Get All Users
+// ==========================
+export const getAllUsers = async (req, res) => {
+  try {
+    const users = await User.find()
+      .select("name email")
+      .sort({ name: 1 });
+
+    res.status(200).json({
+      users,
+    });
+  } catch (error) {
+    console.error("Get all users error:", error);
+
+    res.status(500).json({
+      message: "Server error",
+    });
+  }
+};

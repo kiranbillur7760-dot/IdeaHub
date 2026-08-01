@@ -47,6 +47,15 @@ const ideaSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    executionStatus: {
+  type: String,
+  enum: ["idea", "in-progress", "completed"],
+  default: "idea",
+},project: {
+  type: mongoose.Schema.Types.ObjectId,
+  ref: "Project",
+  default: null,
+},
 
     // 🚩 Users who reported this idea
     reports: [

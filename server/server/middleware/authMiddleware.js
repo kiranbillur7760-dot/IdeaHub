@@ -11,14 +11,17 @@ const authMiddleware = async (req, res, next) => {
       });
     }
 
-    // Get Token
     const token = authHeader.split(" ")[1];
 
-    // Verify Token
+    console.log("TOKEN:", token);
+
     const decoded = jwt.verify(token, "ideahub_secret_key");
 
-    // Find User
+    console.log("DECODED:", decoded);
+
     const user = await User.findById(decoded.id).select("-password");
+
+    console.log("FOUND USER:", user);
 
     if (!user) {
       return res.status(404).json({
@@ -26,11 +29,11 @@ const authMiddleware = async (req, res, next) => {
       });
     }
 
-    // Attach user to request
     req.user = user;
-
     next();
   } catch (error) {
+    console.error(error);
+
     res.status(401).json({
       message: "Invalid Token",
     });

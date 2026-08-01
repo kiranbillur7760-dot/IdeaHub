@@ -6,6 +6,10 @@ import commentRoutes from "./routes/commentRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import ideaRoutes from "./routes/ideaRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
+import projectRoutes from "./routes/projectRoutes.js";
+import taskRoutes from "./routes/taskRoutes.js";
+import activityRoutes from "./routes/activityRoutes.js";
+
 
 import connectDB from "./config/db.js";
 
@@ -47,6 +51,11 @@ app.use("/api/comments", commentRoutes);
 
 app.use("/api/users", userRoutes);
 
+app.use("/api/projects", projectRoutes);
+
+app.use("/api/tasks", taskRoutes);
+
+app.use("/api/activities", activityRoutes);
 // ==========================
 // Test Route
 // ==========================
