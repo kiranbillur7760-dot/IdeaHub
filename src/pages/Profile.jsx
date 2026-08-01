@@ -53,6 +53,42 @@ function Profile() {
       console.error(err);
     }
   };
+  const startProject = async (ideaId) => {
+  const confirmStart = window.confirm(
+    "Do you want to start a project from this idea?"
+  );
+
+  if (!confirmStart) return;
+
+  try {
+    const token = localStorage.getItem("token");
+
+    const res = await API.post(
+      "/projects",
+      {
+        ideaId,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    alert("Project created successfully!");
+
+    // Open the project workspace
+    navigate(`/projects/${res.data.project._id}`);
+
+  } catch (err) {
+    console.error(err.response?.data || err);
+
+    alert(
+      err.response?.data?.message ||
+        "Failed to create project."
+    );
+  }
+};
 
   const totalLikes = ideas.reduce(
     (sum, idea) => sum + (idea.likes ? idea.likes.length : 0),
@@ -209,24 +245,30 @@ function Profile() {
 
                   </div>
 
-                  <div className="flex gap-4 mt-6">
+                  <div className="flex gap-4 mt-6 flex-wrap">
 
-                    <Link
-                      to={`/edit-idea/${idea._id}`}
-                      className="bg-yellow-500 hover:bg-yellow-600 text-white px-5 py-2 rounded-lg transition"
-                    >
-                      ✏️ Edit
-                    </Link>
+  <Link
+    to={`/edit-idea/${idea._id}`}
+    className="bg-yellow-500 hover:bg-yellow-600 text-white px-5 py-2 rounded-lg transition"
+  >
+    ✏️ Edit
+  </Link>
 
-                    <button
-                      onClick={() => deleteIdea(idea._id)}
-                      className="bg-red-600 hover:bg-red-700 text-white px-5 py-2 rounded-lg transition"
-                    >
-                      🗑 Delete
-                    </button>
+  <button
+    onClick={() => deleteIdea(idea._id)}
+    className="bg-red-600 hover:bg-red-700 text-white px-5 py-2 rounded-lg transition"
+  >
+    🗑 Delete
+  </button>
 
-                  </div>
+  <button
+    onClick={() => startProject(idea._id)}
+    className="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-lg transition"
+  >
+    🚀 Start Project
+  </button>
 
+</div>
                 </div>
 
               </div>

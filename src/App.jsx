@@ -10,6 +10,7 @@ import Register from "./pages/Register";
 import Profile from "./pages/Profile";
 import CreateIdea from "./pages/CreateIdea";
 import EditProfile from "./pages/EditProfile";
+import ProjectWorkspace from "./pages/ProjectWorkspace";
 import ProtectedRoute from "./utils/ProtectedRoute";
 
 function App() {
@@ -18,18 +19,41 @@ function App() {
       <Navbar />
 
       <Routes>
+
         <Route
-  path="/saved"
-  element={<SavedIdeas />}
-/>
-        <Route path="/trending" element={<Trending />} />
-        <Route path="/" element={<Home />} />
-        <Route path="/edit-idea/:id" element={<EditIdea />} />
-        <Route path="/explore" element={<Explore />} />
+          path="/saved"
+          element={<SavedIdeas />}
+        />
 
-        <Route path="/login" element={<Login />} />
+        <Route
+          path="/trending"
+          element={<Trending />}
+        />
 
-        <Route path="/register" element={<Register />} />
+        <Route
+          path="/"
+          element={<Home />}
+        />
+
+        <Route
+          path="/edit-idea/:id"
+          element={<EditIdea />}
+        />
+
+        <Route
+          path="/explore"
+          element={<Explore />}
+        />
+
+        <Route
+          path="/login"
+          element={<Login />}
+        />
+
+        <Route
+          path="/register"
+          element={<Register />}
+        />
 
         <Route
           path="/profile"
@@ -48,6 +72,17 @@ function App() {
             </ProtectedRoute>
           }
         />
+
+        {/* Project Workspace */}
+        <Route
+          path="/projects/:projectId"
+          element={
+            <ProtectedRoute>
+              <ProjectWorkspace />
+            </ProtectedRoute>
+          }
+        />
+
       </Routes>
     </>
   );

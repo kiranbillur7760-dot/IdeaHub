@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import API from "../services/api";
 import IdeaCard from "../components/IdeaCard";
+import CategoryFilter from "../components/CategoryFilter";
 
 function Explore() {
   const [ideas, setIdeas] = useState([]);
@@ -8,21 +9,8 @@ function Explore() {
   const [category, setCategory] = useState("All");
 
   useEffect(() => {
-    fetchIdeas();
-  }, []);
-
-  useEffect(() => {
     filterIdeas();
   }, [search, category]);
-
-  const fetchIdeas = async () => {
-    try {
-      const res = await API.get("/ideas");
-      setIdeas(res.data);
-    } catch (err) {
-      console.error(err);
-    }
-  };
 
   const filterIdeas = async () => {
     try {
@@ -43,40 +31,28 @@ function Explore() {
         🌍 Explore Ideas
       </h1>
 
-      {/* Search + Filter */}
-      <div className="grid md:grid-cols-2 gap-4 mb-8">
+      {/* Search */}
+      <input
+        type="text"
+        placeholder="🔍 Search ideas..."
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        className="border-2 border-blue-500 rounded-lg p-3 w-full mb-6"
+      />
 
-        <input
-          type="text"
-          placeholder="🔍 Search ideas..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="border-2 border-blue-500 rounded-lg p-3"
-        />
+      {/* Category Filter */}
+      <CategoryFilter
+        category={category}
+        onCategoryChange={setCategory}
+      />
 
-        <select
-          value={category}
-          onChange={(e) => setCategory(e.target.value)}
-          className="border-2 border-blue-500 rounded-lg p-3"
-        >
-          <option>All</option>
-          <option>Technology</option>
-          <option>Education</option>
-          <option>Health</option>
-          <option>Business</option>
-          <option>Environment</option>
-          <option>Finance</option>
-          <option>AI</option>
-        </select>
-
-      </div>
-
+      {/* Ideas */}
       {ideas.length === 0 ? (
-        <h2 className="text-center text-gray-500">
+        <h2 className="text-center text-gray-500 mt-8">
           No ideas found.
         </h2>
       ) : (
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
           {ideas.map((idea) => (
             <IdeaCard key={idea._id} idea={idea} />
           ))}

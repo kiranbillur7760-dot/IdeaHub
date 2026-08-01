@@ -31,6 +31,9 @@ function IdeaCard({ idea }) {
   const [commentReportReason, setCommentReportReason] = useState("");
   const [reportingComment, setReportingComment] = useState(false);
 
+  // Work on Idea state
+  const [working, setWorking] = useState(false);
+
   // =========================
   // Load Comments + Saved State
   // =========================
@@ -153,6 +156,48 @@ function IdeaCard({ idea }) {
       );
     } finally {
       setSaving(false);
+    }
+  };
+
+  // =========================
+  // Work on Idea
+  // =========================
+
+  const handleWorkOnIdea = () => {
+    try {
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+        alert("Please login to work on an idea.");
+        return;
+      }
+
+      setWorking(true);
+
+      /*
+        For now we are only testing the button.
+
+        Later this function will:
+
+        1. Check whether a project already exists
+        2. Create a project if necessary
+        3. Get the project ID
+        4. Navigate to:
+
+           /projects/:projectId
+
+        We will connect this to your existing project
+        backend next.
+      */
+
+      alert(
+        `You can now start working on "${idea.title}" 🚀`
+      );
+
+      setWorking(false);
+    } catch (err) {
+      console.error("Work on Idea Error:", err);
+      setWorking(false);
     }
   };
 
@@ -458,6 +503,20 @@ function IdeaCard({ idea }) {
             : saved
             ? "🔖 Saved"
             : "🔖 Save Idea"}
+        </button>
+
+        {/* ========================= */}
+        {/* WORK ON IDEA BUTTON */}
+        {/* ========================= */}
+
+        <button
+          onClick={handleWorkOnIdea}
+          disabled={working}
+          className="mt-3 w-full bg-green-600 text-white px-4 py-3 rounded-lg font-semibold hover:bg-green-700 transition disabled:bg-gray-400"
+        >
+          {working
+            ? "Opening Workspace..."
+            : "🚀 Work on this Idea"}
         </button>
 
         {/* ========================= */}

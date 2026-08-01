@@ -7,17 +7,24 @@ const categories = [
   "Health",
   "Safety",
   "Environment",
+  "Business",
+  "Finance",
 ];
 
-function CategoryFilter() {
+function CategoryFilter({ category, onCategoryChange }) {
   return (
-    <div className="max-w-7xl mx-auto mt-8 flex flex-wrap justify-center gap-4">
-      {categories.map((category) => (
+    <div className="flex flex-wrap gap-3">
+      {categories.map((item) => (
         <button
-          key={category}
-          className="bg-blue-100 hover:bg-blue-600 hover:text-white px-5 py-2 rounded-full transition"
+          key={item}
+          onClick={() => onCategoryChange(item)}
+          className={`px-4 py-2 rounded-lg ${
+            category === item
+              ? "bg-blue-600 text-white"
+              : "bg-blue-100 hover:bg-blue-500 hover:text-white"
+          }`}
         >
-          {category}
+          {item}
         </button>
       ))}
     </div>
