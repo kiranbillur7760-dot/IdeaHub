@@ -1,3 +1,4 @@
+import Notification from "../models/Notification.js";
 import Idea from "../models/Idea.js";
 
 // =========================
@@ -220,9 +221,21 @@ export const likeIdea = async (req, res) => {
       idea.likes = idea.likes.filter(
         (id) => id.toString() !== userId
       );
-    } else {
-      idea.likes.push(req.user._id);
-    }
+    } 
+    else {
+  idea.likes.push(req.user._id);
+
+  // Create notification (don't notify yourself)
+  if (idea.userId.toString() !== req.user._id.toString()) {
+    await Notification.create({
+      recipient: idea.userId,
+      sender: req.user._id,
+      type: "like",
+      message: `${req.user.name} liked your idea.`,
+      idea: idea._id,
+    });
+  }
+}
 
     await idea.save();
 
