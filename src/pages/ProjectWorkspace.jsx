@@ -89,7 +89,7 @@ const ProjectWorkspace = () => {
       setError("");
 
       const projectResponse = await axios.get(
-        https://ideahub-4-ybrb.onrender.com/api/projects/${projectId}`,
+        `https://ideahub-4-ybrb.onrender.com/api/projects/${projectId}`,
         authConfig
       );
 
