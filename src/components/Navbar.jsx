@@ -1,4 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
+import NotificationBell from "./NotificationBell";
 
 function Navbar() {
   const navigate = useNavigate();
@@ -26,33 +27,22 @@ function Navbar() {
 
   return (
     <nav className="bg-white border-b shadow-sm sticky top-0 z-50">
-
       <div className="max-w-7xl mx-auto px-6">
-
         <div className="h-16 flex items-center justify-between">
 
-          {/* ========================= */}
           {/* Logo */}
-          {/* ========================= */}
-
           <Link
             to="/"
             className="flex items-center gap-2"
           >
-            <span className="text-3xl">
-              💡
-            </span>
+            <span className="text-3xl">💡</span>
 
             <span className="text-2xl font-bold text-blue-600">
               IdeaHub
             </span>
           </Link>
 
-
-          {/* ========================= */}
           {/* Navigation Icons */}
-          {/* ========================= */}
-
           <div className="flex items-center gap-2">
 
             {/* Home */}
@@ -64,7 +54,6 @@ function Navbar() {
               🏠
             </Link>
 
-
             {/* Explore */}
             <Link
               to="/explore"
@@ -74,7 +63,6 @@ function Navbar() {
               🔍
             </Link>
 
-
             {/* Trending */}
             <Link
               to="/trending"
@@ -83,7 +71,6 @@ function Navbar() {
             >
               🔥
             </Link>
-
 
             {token ? (
               <>
@@ -97,7 +84,6 @@ function Navbar() {
                   🔖
                 </Link>
 
-
                 {/* Create Idea */}
                 <Link
                   to="/create-idea"
@@ -107,6 +93,8 @@ function Navbar() {
                   ➕
                 </Link>
 
+                {/* Notification Bell */}
+                <NotificationBell />
 
                 {/* Profile */}
                 <Link
@@ -118,7 +106,6 @@ function Navbar() {
                     ? user.name.charAt(0).toUpperCase()
                     : "👤"}
                 </Link>
-
 
                 {/* Logout */}
                 <button
@@ -142,7 +129,6 @@ function Navbar() {
                   🔑
                 </Link>
 
-
                 {/* Register */}
                 <Link
                   to="/register"
@@ -156,11 +142,8 @@ function Navbar() {
             )}
 
           </div>
-
         </div>
-
       </div>
-
     </nav>
   );
 }

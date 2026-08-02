@@ -2,8 +2,61 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
+const [members, setMembers] = useState([]);
+const [showInviteModal, setShowInviteModal] = useState(false);
+const [inviteEmail, setInviteEmail] = useState("");
+const [inviting, setInviting] = useState(false);
 
 const ProjectWorkspace = () => {
+  const inviteMember = async () => {
+  try {
+    setInviting(true);
+
+    const token = localStorage.getItem("token");
+
+    await axios.post(
+      "http://localhost:5000/api/collaboration/invite",
+      {
+        projectId,
+        email: inviteEmail,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    alert("Invitation sent!");
+
+    setInviteEmail("");
+    setShowInviteModal(false);
+
+    fetchMembers();
+  } catch (err) {
+    alert(err.response?.data?.message || "Error inviting member");
+  } finally {
+    setInviting(false);
+  }
+};
+  const fetchMembers = async () => {
+  try {
+    const token = localStorage.getItem("token");
+
+    const res = await axios.get(
+      `http://localhost:5000/api/collaboration/project/${projectId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    setMembers(res.data);
+  } catch (err) {
+    console.error(err);
+  }
+};
   const { projectId } = useParams();
 
   // ==========================================
@@ -174,6 +227,7 @@ const ProjectWorkspace = () => {
     fetchProjectData();
     fetchUsers();
     fetchActivities();
+    fetchMembers();
   }, [projectId]);
 
   // ==========================================

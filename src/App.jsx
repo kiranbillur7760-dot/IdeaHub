@@ -1,58 +1,69 @@
-import SavedIdeas from "./pages/SavedIdeas";
-import { Routes, Route } from "react-router-dom";
-import EditIdea from "./pages/EditIdea";
+import { Routes, Route, useLocation } from "react-router-dom";
+
 import Navbar from "./components/Navbar";
-import Trending from "./pages/Trending";
+import ProtectedRoute from "./utils/ProtectedRoute";
+
 import Home from "./pages/Home";
 import Explore from "./pages/Explore";
+import Trending from "./pages/Trending";
+import SavedIdeas from "./pages/SavedIdeas";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Profile from "./pages/Profile";
 import CreateIdea from "./pages/CreateIdea";
+import EditIdea from "./pages/EditIdea";
 import EditProfile from "./pages/EditProfile";
 import ProjectWorkspace from "./pages/ProjectWorkspace";
-import ProtectedRoute from "./utils/ProtectedRoute";
 
 function App() {
+  const location = useLocation();
+
   return (
     <>
-      <Navbar />
+      {/* Hide Navbar on Login & Register pages */}
+      {location.pathname !== "/login" &&
+        location.pathname !== "/register" && <Navbar />}
 
       <Routes>
+        {/* Public Routes */}
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
 
-        <Route
-          path="/saved"
-          element={<SavedIdeas />}
-        />
-
-        <Route
-          path="/trending"
-          element={<Trending />}
-        />
-
+        {/* Protected Routes */}
         <Route
           path="/"
-          element={<Home />}
-        />
-
-        <Route
-          path="/edit-idea/:id"
-          element={<EditIdea />}
+          element={
+            <ProtectedRoute>
+              <Home />
+            </ProtectedRoute>
+          }
         />
 
         <Route
           path="/explore"
-          element={<Explore />}
+          element={
+            <ProtectedRoute>
+              <Explore />
+            </ProtectedRoute>
+          }
         />
 
         <Route
-          path="/login"
-          element={<Login />}
+          path="/trending"
+          element={
+            <ProtectedRoute>
+              <Trending />
+            </ProtectedRoute>
+          }
         />
 
         <Route
-          path="/register"
-          element={<Register />}
+          path="/saved"
+          element={
+            <ProtectedRoute>
+              <SavedIdeas />
+            </ProtectedRoute>
+          }
         />
 
         <Route
@@ -60,6 +71,15 @@ function App() {
           element={
             <ProtectedRoute>
               <Profile />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/edit-profile"
+          element={
+            <ProtectedRoute>
+              <EditProfile />
             </ProtectedRoute>
           }
         />
@@ -73,7 +93,15 @@ function App() {
           }
         />
 
-        {/* Project Workspace */}
+        <Route
+          path="/edit-idea/:id"
+          element={
+            <ProtectedRoute>
+              <EditIdea />
+            </ProtectedRoute>
+          }
+        />
+
         <Route
           path="/projects/:projectId"
           element={
@@ -82,7 +110,6 @@ function App() {
             </ProtectedRoute>
           }
         />
-
       </Routes>
     </>
   );
