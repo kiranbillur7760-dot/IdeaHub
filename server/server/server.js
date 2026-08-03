@@ -11,6 +11,8 @@ import taskRoutes from "./routes/taskRoutes.js";
 import activityRoutes from "./routes/activityRoutes.js";
 import collaborationRoutes from "./routes/collaborationRoutes.js";
 import notificationRoutes from "./routes/notificationRoutes.js";
+import uploadRoutes from "./routes/uploadRoutes.js";
+
 
 import connectDB from "./config/db.js";
 
@@ -59,6 +61,8 @@ app.use("/api/tasks", taskRoutes);
 app.use("/api/activities", activityRoutes);
 
 app.use("/api/notifications", notificationRoutes);
+
+app.use("/api/upload", uploadRoutes);
 // ==========================
 // Test Route
 // ==========================

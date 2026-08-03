@@ -10,17 +10,15 @@ import Idea from "../models/Idea.js";
 export const createIdea = async (req, res) => {
   try {
     console.log("========== CREATE IDEA ==========");
-    console.log("Body:", req.body);
-    console.log("File:", req.file);
-    console.log("User:", req.user);
+    console.log(req.body);
 
-    const { title, description, category } = req.body;
+    const { title, description, category, image } = req.body;
 
     const idea = await Idea.create({
       title,
       description,
       category,
-      image: req.file ? req.file.path : "",
+      image: image || "",
       author: req.user.name,
       userId: req.user._id,
     });
@@ -30,7 +28,6 @@ export const createIdea = async (req, res) => {
     res.status(201).json(idea);
 
   } catch (error) {
-    console.log("========== CREATE ERROR ==========");
     console.error(error);
 
     res.status(500).json({

@@ -1,5 +1,4 @@
 import express from "express";
-import upload from "../middleware/upload.js";
 
 import {
   createIdea,
@@ -21,36 +20,59 @@ const router = express.Router();
 // Public Routes
 // ==========================
 
+// Get all ideas
 router.get("/", getIdeas);
+
+// Get trending ideas
 router.get("/trending", getTrendingIdeas);
+
+// Search ideas
 router.get("/search", searchIdeas);
 
 // ==========================
 // Protected Routes
 // ==========================
 
-// Create Idea with Image Upload
+// Create Idea
 router.post(
   "/",
   authMiddleware,
-  upload.single("image"),
   createIdea
 );
+
+// Report Idea
 router.post(
   "/:id/report",
   authMiddleware,
   reportIdea
 );
-// Get My Ideas
-router.get("/myideas", authMiddleware, getMyIdeas);
+
+// Get Logged-in User Ideas
+router.get(
+  "/myideas",
+  authMiddleware,
+  getMyIdeas
+);
 
 // Update Idea
-router.put("/:id", authMiddleware, updateIdea);
+router.put(
+  "/:id",
+  authMiddleware,
+  updateIdea
+);
 
 // Like / Unlike Idea
-router.put("/:id/like", authMiddleware, likeIdea);
+router.put(
+  "/:id/like",
+  authMiddleware,
+  likeIdea
+);
 
 // Delete Idea
-router.delete("/:id", authMiddleware, deleteIdea);
+router.delete(
+  "/:id",
+  authMiddleware,
+  deleteIdea
+);
 
 export default router;
