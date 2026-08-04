@@ -13,38 +13,64 @@ import {
   joinIdea,
 } from "../controllers/ideaController.js";
 
+
 import authMiddleware from "../middleware/authMiddleware.js";
 
+
 const router = express.Router();
+
+
 
 // ==========================
 // Public Routes
 // ==========================
 
-// Get all ideas
-router.get("/", getIdeas);
 
-// Get trending ideas
-router.get("/trending", getTrendingIdeas);
+// Get all ideas
+router.get(
+  "/",
+  getIdeas
+);
+
+
+// Trending ideas
+router.get(
+  "/trending",
+  getTrendingIdeas
+);
+
 
 // Search ideas
-router.get("/search", searchIdeas);
+router.get(
+  "/search",
+  searchIdeas
+);
+
+
+
 
 // ==========================
 // Protected Routes
 // ==========================
-// Join Idea / Work on Idea
-router.post(
-  "/:id/join",
-  authMiddleware,
-  joinIdea
-);
+
+
 // Create Idea
 router.post(
   "/",
   authMiddleware,
   createIdea
 );
+
+
+
+// Join Idea / Work on Idea
+router.post(
+  "/:id/join",
+  authMiddleware,
+  joinIdea
+);
+
+
 
 // Report Idea
 router.post(
@@ -53,12 +79,16 @@ router.post(
   reportIdea
 );
 
-// Get Logged-in User Ideas
+
+
+// My Ideas
 router.get(
   "/myideas",
   authMiddleware,
   getMyIdeas
 );
+
+
 
 // Update Idea
 router.put(
@@ -67,6 +97,8 @@ router.put(
   updateIdea
 );
 
+
+
 // Like / Unlike Idea
 router.put(
   "/:id/like",
@@ -74,11 +106,15 @@ router.put(
   likeIdea
 );
 
+
+
 // Delete Idea
 router.delete(
   "/:id",
   authMiddleware,
   deleteIdea
 );
+
+
 
 export default router;
