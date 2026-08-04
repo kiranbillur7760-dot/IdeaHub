@@ -11,40 +11,40 @@ function CreateIdea() {
   const [image, setImage] = useState(null);
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  try {
-    const token = localStorage.getItem("token");
+    try {
+      const token = localStorage.getItem("token");
 
-    const formData = new FormData();
+      const formData = new FormData();
 
-    formData.append("title", title);
-    formData.append("description", description);
-    formData.append("category", category);
+      formData.append("title", title);
+      formData.append("description", description);
+      formData.append("category", category);
 
-    if (image) {
-      formData.append("image", image);
+      if (image) {
+        formData.append("image", image);
+      }
+
+      await API.post("/ideas", formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      alert("🎉 Idea created successfully!");
+      navigate("/explore");
+
+    } catch (err) {
+      console.error(err.response?.data || err);
+      alert("Failed to create idea.");
     }
-
-    await API.post("/ideas", formData, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    alert("Idea created successfully!");
-    navigate("/explore");
-
-  } catch (err) {
-    console.error(err.response?.data || err);
-    alert("Failed to create idea.");
-  }
-};
+  };
 
   return (
-    <div className="max-w-2xl mx-auto mt-10 bg-white p-8 rounded-xl shadow-lg">
-
-      <h1 className="text-3xl font-bold mb-6 text-center">
+    <div className="max-w-2xl mx-auto mt-10 bg-white shadow-lg rounded-xl p-8">
+      <h1 className="text-3xl font-bold text-center mb-6">
         Create New Idea
       </h1>
 
@@ -82,12 +82,18 @@ function CreateIdea() {
           <option>AI</option>
         </select>
 
-        <input
-          type="file"
-          accept="image/*"
-          onChange={(e) => setImage(e.target.files[0])}
-          className="w-full"
-        />
+        <div>
+          <label className="block mb-2 font-semibold">
+            Upload Image
+          </label>
+
+          <input
+            type="file"
+            accept="image/*"
+            onChange={(e) => setImage(e.target.files[0])}
+            className="w-full border rounded-lg p-2"
+          />
+        </div>
 
         <button
           type="submit"
@@ -97,7 +103,6 @@ function CreateIdea() {
         </button>
 
       </form>
-
     </div>
   );
 }

@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import API from "../services/api";
 
@@ -163,43 +164,56 @@ function IdeaCard({ idea }) {
   // Work on Idea
   // =========================
 
-  const handleWorkOnIdea = () => {
-    try {
-      const token = localStorage.getItem("token");
+ 
+  // =========================
+// Work on Idea / Join Idea
+// =========================
 
-      if (!token) {
-        alert("Please login to work on an idea.");
-        return;
-      }
+const handleWorkOnIdea = async () => {
+  try {
 
-      setWorking(true);
+    const token = localStorage.getItem("token");
 
-      /*
-        For now we are only testing the button.
 
-        Later this function will:
-
-        1. Check whether a project already exists
-        2. Create a project if necessary
-        3. Get the project ID
-        4. Navigate to:
-
-           /projects/:projectId
-
-        We will connect this to your existing project
-        backend next.
-      */
-
-      alert(
-        `You can now start working on "${idea.title}" 🚀`
-      );
-
-      setWorking(false);
-    } catch (err) {
-      console.error("Work on Idea Error:", err);
-      setWorking(false);
+    if (!token) {
+      alert("Please login to work on an idea.");
+      return;
     }
-  };
+
+
+    setWorking(true);
+
+
+    const res = await API.post(
+      `/ideas/${idea._id}/join`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+
+    alert(res.data.message);
+
+
+  } catch (err) {
+
+    console.error("Work On Idea Error:", err);
+
+
+    alert(
+      err.response?.data?.message ||
+      "Failed to join idea."
+    );
+
+  } finally {
+
+    setWorking(false);
+
+  }
+};
 
   // =========================
   // Add Comment

@@ -1,7 +1,11 @@
 import { useEffect, useState } from "react";
 import API from "../services/api";
-import IdeaCard from "../components/IdeaCard";
+
+import Navbar from "../components/Navbar";
+import SearchBar from "../components/SearchBar";
 import CategoryFilter from "../components/CategoryFilter";
+import IdeaCard from "../components/IdeaCard";
+import Footer from "../components/Footer";
 
 function Explore() {
   const [ideas, setIdeas] = useState([]);
@@ -9,55 +13,87 @@ function Explore() {
   const [category, setCategory] = useState("All");
 
   useEffect(() => {
-    filterIdeas();
-  }, [search, category]);
+    fetchIdeas();
+  }, []);
 
-  const filterIdeas = async () => {
+  const fetchIdeas = async () => {
     try {
-      const res = await API.get(
-        `/ideas/search?keyword=${search}&category=${category}`
-      );
-
-      setIdeas(res.data);
-    } catch (err) {
-      console.error(err);
+      const response = await API.get("/ideas");
+      setIdeas(response.data);
+    } catch (error) {
+      console.error("Error fetching ideas:", error);
     }
   };
 
+
+  const filteredIdeas = ideas.filter((idea) => {
+
+    const matchesSearch =
+      idea.title.toLowerCase().includes(search.toLowerCase()) ||
+      idea.description.toLowerCase().includes(search.toLowerCase());
+
+
+    const matchesCategory =
+      category === "All" ||
+      idea.category === category;
+
+
+    return matchesSearch && matchesCategory;
+  });
+
+
   return (
-    <div className="max-w-7xl mx-auto p-8">
+    <div className="min-h-screen bg-gray-50">
 
-      <h1 className="text-4xl font-bold text-center mb-8">
-        🌍 Explore Ideas
-      </h1>
+      <Navbar />
 
-      {/* Search */}
-      <input
-        type="text"
-        placeholder="🔍 Search ideas..."
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-        className="border-2 border-blue-500 rounded-lg p-3 w-full mb-6"
-      />
+      <section className="max-w-7xl mx-auto px-6 py-12">
 
-      {/* Category Filter */}
-      <CategoryFilter
-        category={category}
-        onCategoryChange={setCategory}
-      />
+        <h1 className="text-4xl font-bold mb-2">
+          Explore Ideas 🚀
+        </h1>
 
-      {/* Ideas */}
-      {ideas.length === 0 ? (
-        <h2 className="text-center text-gray-500 mt-8">
-          No ideas found.
-        </h2>
-      ) : (
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
-          {ideas.map((idea) => (
-            <IdeaCard key={idea._id} idea={idea} />
-          ))}
+        <p className="text-gray-500 mb-8">
+          Discover innovative ideas shared by the community.
+        </p>
+
+
+        <SearchBar
+          search={search}
+          setSearch={setSearch}
+        />
+
+
+        <div className="mt-6">
+          <CategoryFilter
+            category={category}
+            onCategoryChange={setCategory}
+          />
         </div>
-      )}
+
+
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8 mt-10">
+
+          {filteredIdeas.length > 0 ? (
+
+            filteredIdeas.map((idea) => (
+              <IdeaCard
+                key={idea._id}
+                idea={idea}
+              />
+            ))
+
+          ) : (
+
+            <h2>No Ideas Found</h2>
+
+          )}
+
+        </div>
+
+      </section>
+
+      <Footer />
 
     </div>
   );

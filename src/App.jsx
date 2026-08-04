@@ -1,117 +1,125 @@
-import { Routes, Route, useLocation } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 
-import Navbar from "./components/Navbar";
-import ProtectedRoute from "./utils/ProtectedRoute";
-
-import Home from "./pages/Home";
-import Explore from "./pages/Explore";
-import Trending from "./pages/Trending";
-import SavedIdeas from "./pages/SavedIdeas";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
-import Profile from "./pages/Profile";
+import Home from "./pages/Home";
+import Explore from "./pages/Explore";
 import CreateIdea from "./pages/CreateIdea";
-import EditIdea from "./pages/EditIdea";
-import EditProfile from "./pages/EditProfile";
+import IdeaDetails from "./pages/IdeaDetails";
 import ProjectWorkspace from "./pages/ProjectWorkspace";
+import Profile from "./pages/Profile";
+import EditProfile from "./pages/EditProfile";
+import EditIdea from "./pages/EditIdea";
+import SavedIdeas from "./pages/SavedIdeas";
+import Trending from "./pages/Trending";
+
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
-  const location = useLocation();
-
   return (
-    <>
-      {/* Hide Navbar on Login & Register pages */}
-      {location.pathname !== "/login" &&
-        location.pathname !== "/register" && <Navbar />}
+    <Routes>
 
-      <Routes>
-        {/* Public Routes */}
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+      {/* Redirect */}
+      <Route path="*" element={<Navigate to="/" replace />} />
 
-        {/* Protected Routes */}
-        <Route
-          path="/"
-          element={
-            <ProtectedRoute>
-              <Home />
-            </ProtectedRoute>
-          }
-        />
+      {/* Public Routes */}
+      <Route path="/" element={<Login />} />
 
-        <Route
-          path="/explore"
-          element={
-            <ProtectedRoute>
-              <Explore />
-            </ProtectedRoute>
-          }
-        />
+      <Route path="/register" element={<Register />} />
 
-        <Route
-          path="/trending"
-          element={
-            <ProtectedRoute>
-              <Trending />
-            </ProtectedRoute>
-          }
-        />
+      {/* Protected Routes */}
 
-        <Route
-          path="/saved"
-          element={
-            <ProtectedRoute>
-              <SavedIdeas />
-            </ProtectedRoute>
-          }
-        />
+      <Route
+        path="/home"
+        element={
+          <ProtectedRoute>
+            <Home />
+          </ProtectedRoute>
+        }
+      />
 
-        <Route
-          path="/profile"
-          element={
-            <ProtectedRoute>
-              <Profile />
-            </ProtectedRoute>
-          }
-        />
+      <Route
+        path="/explore"
+        element={
+          <ProtectedRoute>
+            <Explore />
+          </ProtectedRoute>
+        }
+      />
 
-        <Route
-          path="/edit-profile"
-          element={
-            <ProtectedRoute>
-              <EditProfile />
-            </ProtectedRoute>
-          }
-        />
+      <Route
+        path="/create-idea"
+        element={
+          <ProtectedRoute>
+            <CreateIdea />
+          </ProtectedRoute>
+        }
+      />
 
-        <Route
-          path="/create-idea"
-          element={
-            <ProtectedRoute>
-              <CreateIdea />
-            </ProtectedRoute>
-          }
-        />
+      <Route
+        path="/ideas/:id"
+        element={
+          <ProtectedRoute>
+            <IdeaDetails />
+          </ProtectedRoute>
+        }
+      />
 
-        <Route
-          path="/edit-idea/:id"
-          element={
-            <ProtectedRoute>
-              <EditIdea />
-            </ProtectedRoute>
-          }
-        />
+      <Route
+        path="/edit-idea/:id"
+        element={
+          <ProtectedRoute>
+            <EditIdea />
+          </ProtectedRoute>
+        }
+      />
 
-        <Route
-          path="/projects/:projectId"
-          element={
-            <ProtectedRoute>
-              <ProjectWorkspace />
-            </ProtectedRoute>
-          }
-        />
-      </Routes>
-    </>
+      <Route
+        path="/profile"
+        element={
+          <ProtectedRoute>
+            <Profile />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/edit-profile"
+        element={
+          <ProtectedRoute>
+            <EditProfile />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/saved"
+        element={
+          <ProtectedRoute>
+            <SavedIdeas />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/trending"
+        element={
+          <ProtectedRoute>
+            <Trending />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/projects/:projectId"
+        element={
+          <ProtectedRoute>
+            <ProjectWorkspace />
+          </ProtectedRoute>
+        }
+      />
+
+    </Routes>
   );
 }
 

@@ -2,10 +2,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
-const [members, setMembers] = useState([]);
-const [showInviteModal, setShowInviteModal] = useState(false);
-const [inviteEmail, setInviteEmail] = useState("");
-const [inviting, setInviting] = useState(false);
 
 const ProjectWorkspace = () => {
   const inviteMember = async () => {
@@ -58,6 +54,10 @@ const ProjectWorkspace = () => {
   }
 };
   const { projectId } = useParams();
+  const [members, setMembers] = useState([]);
+const [showInviteModal, setShowInviteModal] = useState(false);
+const [inviteEmail, setInviteEmail] = useState("");
+const [inviting, setInviting] = useState(false);
 
   // ==========================================
   // AUTH TOKEN

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import API from "../services/api";
 
 function Login() {
@@ -20,58 +20,99 @@ function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    console.log("Login button clicked");
+    console.log("Form:", form);
+
     try {
       const res = await API.post("/auth/login", form);
 
-      // Save JWT Token
+      console.log("✅ Login Successful");
+      console.log("Response:", res.data);
+
+      // Save token
       localStorage.setItem("token", res.data.token);
 
-      // Save User
-      localStorage.setItem("user", JSON.stringify(res.data.user));
+      // Save user
+      localStorage.setItem(
+        "user",
+        JSON.stringify(res.data.user)
+      );
 
       alert("🎉 Login Successful!");
 
-      navigate("/");
+      console.log("Stored Token:");
+      console.log(localStorage.getItem("token"));
+
+      console.log("Stored User:");
+      console.log(localStorage.getItem("user"));
+
+      setTimeout(() => {
+        console.log("Navigating to /home...");
+        navigate("/home", { replace: true });
+      }, 1000);
+
     } catch (err) {
-      alert(err.response?.data?.message || "Login Failed");
+      console.error("Login Error:", err);
+      console.error("Response:", err.response);
+      console.error("Status:", err.response?.status);
+      console.error("Data:", err.response?.data);
+
+      alert(
+        err.response?.data?.message || "Login Failed"
+      );
     }
   };
 
   return (
-    <div className="max-w-md mx-auto mt-16 bg-white shadow-lg rounded-xl p-8">
+    <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
+      <div className="w-full max-w-md bg-white shadow-lg rounded-xl p-8">
 
-      <h1 className="text-3xl font-bold text-center mb-8">
-        Login
-      </h1>
+        <h1 className="text-3xl font-bold text-center mb-8">
+          Login to IdeaHub
+        </h1>
 
-      <form onSubmit={handleSubmit} className="space-y-5">
+        <form onSubmit={handleSubmit} className="space-y-5">
 
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          className="w-full border p-3 rounded-lg"
-          onChange={handleChange}
-          required
-        />
+          <input
+            type="email"
+            name="email"
+            placeholder="Email"
+            value={form.email}
+            onChange={handleChange}
+            className="w-full border p-3 rounded-lg"
+            required
+          />
 
-        <input
-          type="password"
-          name="password"
-          placeholder="Password"
-          className="w-full border p-3 rounded-lg"
-          onChange={handleChange}
-          required
-        />
+          <input
+            type="password"
+            name="password"
+            placeholder="Password"
+            value={form.password}
+            onChange={handleChange}
+            className="w-full border p-3 rounded-lg"
+            required
+          />
 
-        <button
-          className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700"
-        >
-          Login
-        </button>
+          <button
+            type="submit"
+            className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700"
+          >
+            Login
+          </button>
 
-      </form>
+        </form>
 
+        <p className="text-center mt-6">
+          Don't have an account?{" "}
+          <Link
+            to="/register"
+            className="text-blue-600 font-semibold hover:underline"
+          >
+            Register
+          </Link>
+        </p>
+
+      </div>
     </div>
   );
 }

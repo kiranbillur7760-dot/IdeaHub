@@ -20,9 +20,7 @@ function Navbar() {
 
     alert("Logged out successfully!");
 
-    navigate("/login");
-
-    window.location.reload();
+    navigate("/", { replace: true });
   };
 
   return (
@@ -32,7 +30,7 @@ function Navbar() {
 
           {/* Logo */}
           <Link
-            to="/"
+            to="/home"
             className="flex items-center gap-2"
           >
             <span className="text-3xl">💡</span>
@@ -42,12 +40,12 @@ function Navbar() {
             </span>
           </Link>
 
-          {/* Navigation Icons */}
+          {/* Navigation */}
           <div className="flex items-center gap-2">
 
             {/* Home */}
             <Link
-              to="/"
+              to="/home"
               title="Home"
               className="w-11 h-11 flex items-center justify-center rounded-xl text-2xl hover:bg-blue-50 hover:text-blue-600 transition"
             >
@@ -74,7 +72,6 @@ function Navbar() {
 
             {token ? (
               <>
-
                 {/* Saved Ideas */}
                 <Link
                   to="/saved"
@@ -93,7 +90,7 @@ function Navbar() {
                   ➕
                 </Link>
 
-                {/* Notification Bell */}
+                {/* Notifications */}
                 <NotificationBell />
 
                 {/* Profile */}
@@ -115,14 +112,12 @@ function Navbar() {
                 >
                   🚪
                 </button>
-
               </>
             ) : (
               <>
-
                 {/* Login */}
                 <Link
-                  to="/login"
+                  to="/"
                   title="Login"
                   className="w-11 h-11 flex items-center justify-center rounded-xl text-2xl hover:bg-blue-50 transition"
                 >
@@ -137,7 +132,6 @@ function Navbar() {
                 >
                   📝
                 </Link>
-
               </>
             )}
 
