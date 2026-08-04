@@ -250,6 +250,81 @@ export const likeIdea = async (req, res) => {
     });
   }
 };
+
+// =========================
+// Join Idea / Work on Idea
+// =========================
+export const joinIdea = async (req, res) => {
+  try {
+
+    const idea = await Idea.findById(req.params.id);
+
+    if (!idea) {
+      return res.status(404).json({
+        message: "Idea not found",
+      });
+    }
+
+
+    const userId = req.user._id.toString();
+
+
+    // Check if user already joined
+    const alreadyJoined = idea.collaborators.some(
+      (id) => id.toString() === userId
+    );
+
+
+    if (alreadyJoined) {
+      return res.status(400).json({
+        message: "You are already working on this idea",
+      });
+    }
+
+
+    // Add user as collaborator
+    idea.collaborators.push(req.user._id);
+
+
+    // Change status
+    if (idea.executionStatus === "new") {
+      idea.executionStatus = "looking-for-team";
+    }
+
+
+    await idea.save();
+
+
+    // Optional notification to idea owner
+    if (idea.userId.toString() !== userId) {
+
+      await Notification.create({
+        recipient: idea.userId,
+        sender: req.user._id,
+        type: "collaboration",
+        message: `${req.user.name} wants to work on your idea.`,
+        idea: idea._id,
+      });
+
+    }
+
+
+    res.status(200).json({
+      message: "Joined idea successfully 🚀",
+      idea,
+    });
+
+
+  } catch (error) {
+
+    console.error("JOIN IDEA ERROR:", error);
+
+    res.status(500).json({
+      message: error.message,
+    });
+
+  }
+};
 // ==========================
 // Report Idea
 // ==========================

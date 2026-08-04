@@ -10,6 +10,7 @@ import {
   deleteIdea,
   likeIdea,
   reportIdea,
+  joinIdea,
 } from "../controllers/ideaController.js";
 
 import authMiddleware from "../middleware/authMiddleware.js";
@@ -32,7 +33,12 @@ router.get("/search", searchIdeas);
 // ==========================
 // Protected Routes
 // ==========================
-
+// Join Idea / Work on Idea
+router.post(
+  "/:id/join",
+  authMiddleware,
+  joinIdea
+);
 // Create Idea
 router.post(
   "/",
