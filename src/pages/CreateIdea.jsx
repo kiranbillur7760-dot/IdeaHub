@@ -11,36 +11,34 @@ function CreateIdea() {
   const [image, setImage] = useState(null);
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    try {
-      const token = localStorage.getItem("token");
+  try {
+    const token = localStorage.getItem("token");
 
-      const formData = new FormData();
-
-      formData.append("title", title);
-      formData.append("description", description);
-      formData.append("category", category);
-
-      if (image) {
-        formData.append("image", image);
-      }
-
-      await API.post("/ideas", formData, {
+    await API.post(
+      "/ideas",
+      {
+        title,
+        description,
+        category,
+        image: "",
+      },
+      {
         headers: {
           Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data",
         },
-      });
+      }
+    );
 
-      alert("🎉 Idea created successfully!");
-      navigate("/explore");
+    alert("🎉 Idea created successfully!");
+    navigate("/explore");
 
-    } catch (err) {
-      console.error(err.response?.data || err);
-      alert("Failed to create idea.");
-    }
-  };
+  } catch (err) {
+    console.error(err.response?.data || err);
+    alert(err.response?.data?.message || "Failed to create idea.");
+  }
+};
 
   return (
     <div className="max-w-2xl mx-auto mt-10 bg-white shadow-lg rounded-xl p-8">
@@ -82,18 +80,7 @@ function CreateIdea() {
           <option>AI</option>
         </select>
 
-        <div>
-          <label className="block mb-2 font-semibold">
-            Upload Image
-          </label>
-
-          <input
-            type="file"
-            accept="image/*"
-            onChange={(e) => setImage(e.target.files[0])}
-            className="w-full border rounded-lg p-2"
-          />
-        </div>
+        
 
         <button
           type="submit"

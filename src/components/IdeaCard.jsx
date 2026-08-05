@@ -183,41 +183,44 @@ function IdeaCard({ idea }) {
   // Work On Idea
   // =========================
 
-  const handleWorkOnIdea =
-    async () => {
+  const handleWorkOnIdea = async () => {
+  console.log("Button clicked");
 
-      try {
+  try {
+    const token = localStorage.getItem("token");
 
-        const token =
-          localStorage.getItem("token");
+    if (!token) {
+      alert("Please login to work on an idea.");
+      return;
+    }
 
-        if (!token) {
-          alert("Login first");
-          return;
-        }
+    setWorking(true);
+    console.log("Sending request...");
 
-        setWorking(true);
-
-        const res =
-          await API.post(
-            `/ideas/${idea._id}/join`,
-            {},
-            {
-              headers: {
-                Authorization:
-                  `Bearer ${token}`,
-              },
-            }
-          );
-
-        alert(res.data.message);
-
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setWorking(false);
+    const res = await API.post(
+      `/ideas/${idea._id}/join`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       }
-    };
+    );
+
+    console.log("Response:", res.data);
+
+    alert(res.data.message);
+
+  } catch (err) {
+    console.log("ERROR:", err);
+    console.log("Response:", err.response);
+
+    alert(err.response?.data?.message || "Failed to join idea.");
+
+  } finally {
+    setWorking(false);
+  }
+};
       // =========================
   // Add Comment
   // =========================
