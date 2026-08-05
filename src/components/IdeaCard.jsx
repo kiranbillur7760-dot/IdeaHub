@@ -207,17 +207,23 @@ const handleWorkOnIdea = async () => {
       }
     );
 
+    console.log("JOIN RESPONSE:", res.data);
+
     alert(res.data.message);
 
-    // Open workspace automatically
+    // Open Project Workspace
     if (res.data.projectId) {
-      navigate(`/workspace/${res.data.projectId}`);
+      navigate(`/projects/${res.data.projectId}`);
     }
 
   } catch (err) {
-    console.error(err);
+    console.error("JOIN ERROR:", err);
 
-    alert(err.response?.data?.message || "Failed to join idea.");
+    alert(
+      err.response?.data?.message ||
+      "Failed to join idea."
+    );
+
   } finally {
     setWorking(false);
   }
