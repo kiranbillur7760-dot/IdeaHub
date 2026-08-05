@@ -11,8 +11,10 @@ import {
   likeIdea,
   reportIdea,
   joinIdea,
+  addComment,
+  getComments,
+  deleteComment,
 } from "../controllers/ideaController.js";
-
 
 import authMiddleware from "../middleware/authMiddleware.js";
 
@@ -52,7 +54,18 @@ router.get(
 // ==========================
 // Protected Routes
 // ==========================
+// Get comments for an idea
+router.get("/:id/comments", getComments);
 
+// Add a comment
+router.post("/:id/comments", authMiddleware, addComment);
+
+// Delete a comment
+router.delete(
+  "/:id/comments/:commentId",
+  authMiddleware,
+  deleteComment
+);
 
 // Create Idea
 router.post(

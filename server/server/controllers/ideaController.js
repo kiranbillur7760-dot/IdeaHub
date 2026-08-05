@@ -325,6 +325,100 @@ export const joinIdea = async (req, res) => {
 
   }
 };
+
+export const addComment = async (req, res) => {
+  try {
+    const { text } = req.body;
+
+    if (!text || text.trim() === "") {
+      return res.status(400).json({
+        message: "Comment cannot be empty",
+      });
+    }
+
+    const idea = await Idea.findById(req.params.id);
+
+    if (!idea) {
+      return res.status(404).json({
+        message: "Idea not found",
+      });
+    }
+
+    idea.comments.push({
+      user: req.user.id,
+      text,
+    });
+
+    await idea.save();
+
+    const updatedIdea = await Idea.findById(req.params.id)
+      .populate("comments.user", "name email");
+
+    res.status(200).json(updatedIdea.comments);
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+
+export const getComments = async (req, res) => {
+  try {
+    const idea = await Idea.findById(req.params.id)
+      .populate("comments.user", "name email");
+
+    if (!idea) {
+      return res.status(404).json({
+        message: "Idea not found",
+      });
+    }
+
+    res.json(idea.comments);
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+
+export const deleteComment = async (req, res) => {
+  try {
+    const idea = await Idea.findById(req.params.id);
+
+    if (!idea) {
+      return res.status(404).json({
+        message: "Idea not found",
+      });
+    }
+
+    const comment = idea.comments.id(req.params.commentId);
+
+    if (!comment) {
+      return res.status(404).json({
+        message: "Comment not found",
+      });
+    }
+
+    if (comment.user.toString() !== req.user.id) {
+      return res.status(403).json({
+        message: "Not authorized",
+      });
+    }
+
+    comment.deleteOne();
+
+    await idea.save();
+
+    res.json({
+      message: "Comment deleted successfully",
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+
 // ==========================
 // Report Idea
 // ==========================

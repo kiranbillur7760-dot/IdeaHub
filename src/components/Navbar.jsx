@@ -24,120 +24,131 @@ function Navbar() {
   };
 
   return (
-    <nav className="bg-white border-b shadow-sm sticky top-0 z-50">
+    <nav className="sticky top-0 z-50 backdrop-blur-md bg-white/80 border-b border-gray-200 shadow-md">
+
       <div className="max-w-7xl mx-auto px-6">
-        <div className="h-16 flex items-center justify-between">
+
+        <div className="h-20 flex justify-between items-center">
 
           {/* Logo */}
+
           <Link
             to="/home"
-            className="flex items-center gap-2"
+            className="flex items-center gap-3 group"
           >
-            <span className="text-3xl">💡</span>
 
-            <span className="text-2xl font-bold text-blue-600">
-              IdeaHub
-            </span>
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-r from-blue-600 to-purple-600 flex items-center justify-center text-white text-2xl shadow-lg group-hover:scale-110 transition">
+              💡
+            </div>
+
+            <div>
+
+              <h1 className="text-2xl font-extrabold text-gray-800">
+                IdeaHub
+              </h1>
+
+              <p className="text-xs text-gray-500">
+                Build • Collaborate • Launch
+              </p>
+
+            </div>
+
           </Link>
 
           {/* Navigation */}
-          <div className="flex items-center gap-2">
 
-            {/* Home */}
+          <div className="flex items-center gap-3">
+
             <Link
               to="/home"
               title="Home"
-              className="w-11 h-11 flex items-center justify-center rounded-xl text-2xl hover:bg-blue-50 hover:text-blue-600 transition"
+              className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl hover:bg-blue-100 transition"
             >
               🏠
             </Link>
 
-            {/* Explore */}
             <Link
               to="/explore"
-              title="Explore Ideas"
-              className="w-11 h-11 flex items-center justify-center rounded-xl text-2xl hover:bg-blue-50 hover:text-blue-600 transition"
+              title="Explore"
+              className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl hover:bg-blue-100 transition"
             >
               🔍
             </Link>
 
-            {/* Trending */}
             <Link
               to="/trending"
-              title="Trending Ideas"
-              className="w-11 h-11 flex items-center justify-center rounded-xl text-2xl hover:bg-orange-50 transition"
+              title="Trending"
+              className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl hover:bg-orange-100 transition"
             >
               🔥
             </Link>
 
             {token ? (
               <>
-                {/* Saved Ideas */}
+
                 <Link
                   to="/saved"
                   title="Saved Ideas"
-                  className="w-11 h-11 flex items-center justify-center rounded-xl text-2xl hover:bg-yellow-50 transition"
+                  className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl hover:bg-yellow-100 transition"
                 >
                   🔖
                 </Link>
 
-                {/* Create Idea */}
                 <Link
                   to="/create-idea"
                   title="Create Idea"
-                  className="w-11 h-11 flex items-center justify-center rounded-xl text-2xl hover:bg-green-50 transition"
+                  className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-5 py-3 rounded-xl font-semibold hover:scale-105 transition shadow-lg"
                 >
-                  ➕
+                  + Create
                 </Link>
 
-                {/* Notifications */}
                 <NotificationBell />
 
-                {/* Profile */}
                 <Link
                   to="/profile"
                   title="Profile"
-                  className="w-11 h-11 flex items-center justify-center rounded-full bg-blue-600 text-white font-bold text-lg hover:bg-blue-700 transition"
+                  className="w-12 h-12 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold flex items-center justify-center shadow-lg hover:scale-105 transition"
                 >
                   {user?.name
                     ? user.name.charAt(0).toUpperCase()
                     : "👤"}
                 </Link>
 
-                {/* Logout */}
                 <button
                   onClick={handleLogout}
                   title="Logout"
-                  className="w-11 h-11 flex items-center justify-center rounded-xl text-2xl hover:bg-red-50 transition"
+                  className="px-4 py-2 rounded-xl bg-red-500 text-white hover:bg-red-600 transition shadow"
                 >
-                  🚪
+                  Logout
                 </button>
+
               </>
             ) : (
               <>
-                {/* Login */}
+
                 <Link
                   to="/"
-                  title="Login"
-                  className="w-11 h-11 flex items-center justify-center rounded-xl text-2xl hover:bg-blue-50 transition"
+                  className="px-5 py-2 rounded-xl bg-blue-600 text-white hover:bg-blue-700 transition"
                 >
-                  🔑
+                  Login
                 </Link>
 
-                {/* Register */}
                 <Link
                   to="/register"
-                  title="Register"
-                  className="w-11 h-11 flex items-center justify-center rounded-xl text-2xl hover:bg-green-50 transition"
+                  className="px-5 py-2 rounded-xl border border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white transition"
                 >
-                  📝
+                  Register
                 </Link>
+
               </>
             )}
 
           </div>
+
         </div>
+
       </div>
+
     </nav>
   );
 }

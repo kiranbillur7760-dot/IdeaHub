@@ -1,92 +1,128 @@
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+import { FaRocket, FaLightbulb, FaUsers } from "react-icons/fa";
 
 function Hero() {
-  const navigate = useNavigate();
-
   return (
-    <section className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-700 text-white">
+    <section className="relative overflow-hidden bg-gradient-to-r from-blue-700 via-indigo-700 to-purple-700 text-white">
 
-      <div className="max-w-7xl mx-auto px-6 py-24 md:py-32 text-center">
+      {/* Background Blur */}
+      <div className="absolute -top-20 -left-20 w-72 h-72 bg-white/10 rounded-full blur-3xl"></div>
+      <div className="absolute bottom-0 right-0 w-96 h-96 bg-pink-500/20 rounded-full blur-3xl"></div>
 
-        {/* Small Badge */}
-        <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 px-4 py-2 rounded-full mb-6">
-          <span>💡</span>
-          <span className="text-sm font-medium">
-            Where Ideas Become Reality
-          </span>
-        </div>
+      <div className="relative max-w-7xl mx-auto px-6 py-24">
 
+        <div className="grid lg:grid-cols-2 gap-16 items-center">
 
-        {/* Main Heading */}
-        <h1 className="text-5xl md:text-7xl font-extrabold mb-6 leading-tight">
-          Turn Ideas Into
-          <span className="block text-yellow-300">
-            Reality 🚀
-          </span>
-        </h1>
+          {/* Left Side */}
+          <div>
 
+            <span className="inline-block bg-white/20 px-4 py-2 rounded-full text-sm font-semibold mb-6 backdrop-blur">
+              🚀 Build the Future Together
+            </span>
 
-        {/* Description */}
-        <p className="text-lg md:text-xl text-blue-100 max-w-3xl mx-auto mb-10 leading-relaxed">
-          IdeaHub is a platform where innovators, students,
-          developers and entrepreneurs can share ideas,
-          discover inspiration and build the future together.
-        </p>
+            <h1 className="text-5xl md:text-6xl font-extrabold leading-tight">
+              Turn Your
+              <span className="text-yellow-300"> Ideas </span>
+              Into Successful
+              <br />
+              Startups
+            </h1>
 
-
-        {/* Buttons */}
-        <div className="flex flex-col sm:flex-row justify-center gap-4">
-
-          {/* Explore */}
-          <button
-            onClick={() => navigate("/explore")}
-            className="bg-white text-blue-700 px-8 py-4 rounded-xl font-bold text-lg hover:scale-105 hover:shadow-xl transition duration-300"
-          >
-            🔍 Explore Ideas
-          </button>
-
-
-          {/* Create */}
-          <button
-            onClick={() => navigate("/create-idea")}
-            className="bg-yellow-400 text-gray-900 px-8 py-4 rounded-xl font-bold text-lg hover:bg-yellow-300 hover:scale-105 hover:shadow-xl transition duration-300"
-          >
-            💡 Share Your Idea
-          </button>
-
-        </div>
-
-
-        {/* Stats */}
-        <div className="mt-16 grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-3xl mx-auto">
-
-          <div className="bg-white/10 backdrop-blur-sm rounded-xl p-5 border border-white/10">
-            <div className="text-3xl font-bold">
-              💡
-            </div>
-            <p className="mt-2 text-blue-100">
-              Share Ideas
+            <p className="mt-6 text-lg text-blue-100 leading-8 max-w-xl">
+              IdeaHub connects innovators, developers, designers,
+              entrepreneurs, and investors to collaborate on
+              groundbreaking startup ideas.
             </p>
+
+            <div className="flex flex-wrap gap-4 mt-10">
+
+              <Link
+                to="/explore"
+                className="bg-white text-blue-700 px-8 py-4 rounded-xl font-bold hover:scale-105 transition shadow-xl"
+              >
+                Explore Ideas
+              </Link>
+
+              <Link
+                to="/create"
+                className="border-2 border-white px-8 py-4 rounded-xl font-bold hover:bg-white hover:text-blue-700 transition"
+              >
+                Share Your Idea
+              </Link>
+
+            </div>
+
           </div>
 
+          {/* Right Side */}
+          <div className="grid gap-6">
 
-          <div className="bg-white/10 backdrop-blur-sm rounded-xl p-5 border border-white/10">
-            <div className="text-3xl font-bold">
-              🤝
+            <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 shadow-xl">
+
+              <div className="flex items-center gap-4">
+
+                <div className="bg-yellow-400 text-black p-4 rounded-xl text-2xl">
+                  <FaLightbulb />
+                </div>
+
+                <div>
+                  <h3 className="font-bold text-xl">
+                    1000+ Startup Ideas
+                  </h3>
+
+                  <p className="text-blue-100">
+                    Discover innovative ideas from creators worldwide.
+                  </p>
+                </div>
+
+              </div>
+
             </div>
-            <p className="mt-2 text-blue-100">
-              Connect & Collaborate
-            </p>
-          </div>
 
+            <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 shadow-xl">
 
-          <div className="bg-white/10 backdrop-blur-sm rounded-xl p-5 border border-white/10">
-            <div className="text-3xl font-bold">
-              🚀
+              <div className="flex items-center gap-4">
+
+                <div className="bg-green-400 text-black p-4 rounded-xl text-2xl">
+                  <FaUsers />
+                </div>
+
+                <div>
+                  <h3 className="font-bold text-xl">
+                    Collaborate with Teams
+                  </h3>
+
+                  <p className="text-blue-100">
+                    Join projects and build startups together.
+                  </p>
+                </div>
+
+              </div>
+
             </div>
-            <p className="mt-2 text-blue-100">
-              Build the Future
-            </p>
+
+            <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 shadow-xl">
+
+              <div className="flex items-center gap-4">
+
+                <div className="bg-red-400 text-black p-4 rounded-xl text-2xl">
+                  <FaRocket />
+                </div>
+
+                <div>
+                  <h3 className="font-bold text-xl">
+                    Launch Your Startup
+                  </h3>
+
+                  <p className="text-blue-100">
+                    Transform ideas into successful businesses.
+                  </p>
+                </div>
+
+              </div>
+
+            </div>
+
           </div>
 
         </div>

@@ -6,6 +6,10 @@ import {
   getProfile,
   updateProfile,
   getAllUsers,
+  followUser,
+  unfollowUser,
+  getFollowers,
+  getFollowing,
 } from "../controllers/userController.js";
 
 const router = express.Router();
@@ -17,6 +21,18 @@ router.get(
   getProfile
 );
 
+
+// Follow a user
+router.put("/:id/follow", authMiddleware, followUser);
+
+// Unfollow a user
+router.put("/:id/unfollow", authMiddleware, unfollowUser);
+
+// Get followers
+router.get("/:id/followers", getFollowers);
+
+// Get following
+router.get("/:id/following", getFollowing);
 // Update logged-in user's profile
 router.put(
   "/profile",
