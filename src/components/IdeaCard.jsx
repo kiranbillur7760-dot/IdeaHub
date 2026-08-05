@@ -183,9 +183,11 @@ function IdeaCard({ idea }) {
   // Work On Idea
   // =========================
 
-  const handleWorkOnIdea = async () => {
-  console.log("Button clicked");
+ import { useNavigate } from "react-router-dom";
 
+const navigate = useNavigate();
+
+const handleWorkOnIdea = async () => {
   try {
     const token = localStorage.getItem("token");
 
@@ -195,7 +197,6 @@ function IdeaCard({ idea }) {
     }
 
     setWorking(true);
-    console.log("Sending request...");
 
     const res = await API.post(
       `/ideas/${idea._id}/join`,
@@ -207,16 +208,17 @@ function IdeaCard({ idea }) {
       }
     );
 
-    console.log("Response:", res.data);
-
     alert(res.data.message);
 
+    // Open workspace automatically
+    if (res.data.projectId) {
+      navigate(`/workspace/${res.data.projectId}`);
+    }
+
   } catch (err) {
-    console.log("ERROR:", err);
-    console.log("Response:", err.response);
+    console.error(err);
 
     alert(err.response?.data?.message || "Failed to join idea.");
-
   } finally {
     setWorking(false);
   }

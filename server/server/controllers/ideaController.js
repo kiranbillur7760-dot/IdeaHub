@@ -1,6 +1,6 @@
 import Notification from "../models/Notification.js";
 import Idea from "../models/Idea.js";
-
+import Project from "../models/Project.js";
 // =========================
 // Create Idea
 // =========================
@@ -252,11 +252,10 @@ export const likeIdea = async (req, res) => {
 };
 
 // =========================
-// Join Idea / Work on Idea
+// Join Idea
 // =========================
 export const joinIdea = async (req, res) => {
   try {
-
     const idea = await Idea.findById(req.params.id);
 
     if (!idea) {
@@ -265,39 +264,56 @@ export const joinIdea = async (req, res) => {
       });
     }
 
-
     const userId = req.user._id.toString();
 
-
-    // Check if user already joined
+    // Check if already joined
     const alreadyJoined = idea.collaborators.some(
       (id) => id.toString() === userId
     );
 
+    if (!alreadyJoined) {
+      idea.collaborators.push(req.user._id);
 
-    if (alreadyJoined) {
-      return res.status(400).json({
-        message: "You are already working on this idea",
+      if (idea.executionStatus === "new") {
+        idea.executionStatus = "looking-for-team";
+      }
+    }
+
+    // --------------------------------
+    // Create Project if it doesn't exist
+    // --------------------------------
+    let project;
+
+    if (idea.project) {
+      project = await Project.findById(idea.project);
+    }
+
+    if (!project) {
+      project = await Project.create({
+        title: idea.title,
+        description: idea.description,
+        owner: idea.userId,
+        members: [idea.userId, ...idea.collaborators],
+        status: "active",
+        progress: 0,
       });
+
+      idea.project = project._id;
+    } else {
+      const exists = project.members.some(
+        (member) => member.toString() === userId
+      );
+
+      if (!exists) {
+        project.members.push(req.user._id);
+        await project.save();
+      }
     }
-
-
-    // Add user as collaborator
-    idea.collaborators.push(req.user._id);
-
-
-    // Change status
-    if (idea.executionStatus === "new") {
-      idea.executionStatus = "looking-for-team";
-    }
-
 
     await idea.save();
 
-
-    // Optional notification to idea owner
+    // Notification
     if (idea.userId.toString() !== userId) {
-
       await Notification.create({
         recipient: idea.userId,
         sender: req.user._id,
@@ -305,24 +321,19 @@ export const joinIdea = async (req, res) => {
         message: `${req.user.name} wants to work on your idea.`,
         idea: idea._id,
       });
-
     }
 
-
-    res.status(200).json({
+    return res.status(200).json({
       message: "Joined idea successfully 🚀",
-      idea,
+      projectId: project._id,
     });
-
 
   } catch (error) {
-
     console.error("JOIN IDEA ERROR:", error);
 
-    res.status(500).json({
+    return res.status(500).json({
       message: error.message,
     });
-
   }
 };
 
