@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import API from "../services/api";
 
 import IdeaStats from "./IdeaStats";
 import AuthorInfo from "./AuthorInfo";
 import IdeaActions from "./IdeaActions";
-
 function IdeaCard({ idea }) {
   // =========================
   // States
@@ -183,8 +183,7 @@ function IdeaCard({ idea }) {
   // Work On Idea
   // =========================
 
- import { useNavigate } from "react-router-dom";
-
+ 
 const navigate = useNavigate();
 
 const handleWorkOnIdea = async () => {
