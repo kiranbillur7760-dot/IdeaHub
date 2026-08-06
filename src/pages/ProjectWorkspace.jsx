@@ -11,7 +11,7 @@ const ProjectWorkspace = () => {
     const token = localStorage.getItem("token");
 
     await axios.post(
-      "http://localhost:5000/api/collaboration/invite",
+  "https://ideahub-4-ybrb.onrender.com/api/collaboration/invite",
       {
         projectId,
         email: inviteEmail,

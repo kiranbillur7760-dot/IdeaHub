@@ -208,13 +208,16 @@ const handleWorkOnIdea = async () => {
     );
 
     console.log("JOIN RESPONSE:", res.data);
+console.log("PROJECT ID:", res.data.projectId);
 
-    alert(res.data.message);
+alert(JSON.stringify(res.data));
 
-    // Open Project Workspace
-    if (res.data.projectId) {
-      navigate(`/projects/${res.data.projectId}`);
-    }
+if (!res.data.projectId) {
+  alert("projectId not received from backend!");
+  return;
+}
+
+navigate(`/projects/${res.data.projectId}`);
 
   } catch (err) {
     console.error("JOIN ERROR:", err);
