@@ -12,7 +12,7 @@ function IdeaDetails() {
 
   useEffect(() => {
     fetchIdea();
-  }, []);
+  }, [id]);
 
   const fetchIdea = async () => {
     try {
@@ -57,11 +57,12 @@ function IdeaDetails() {
           {idea.description}
         </p>
 
+        {/* Project Info */}
         <div className="mt-8 border-t pt-6 space-y-2">
 
           <p>
             <strong>Author:</strong>{" "}
-            {idea.author?.name || "Unknown"}
+            {idea.author || "Unknown"}
           </p>
 
           <p>
@@ -81,7 +82,65 @@ function IdeaDetails() {
 
         </div>
 
-        <div className="flex gap-4 mt-8">
+        {/* ================= TEAM ================= */}
+
+        <div className="mt-10 border-t pt-6">
+
+          <h2 className="text-2xl font-bold mb-5">
+            👥 Team
+          </h2>
+
+          {idea.team && idea.team.length > 0 ? (
+            <div className="space-y-4">
+
+              {idea.team.map((member) => (
+                <div
+                  key={member.user?._id}
+                  className="flex items-center justify-between bg-gray-50 p-4 rounded-lg border"
+                >
+
+                  <div className="flex items-center gap-4">
+
+                    <img
+                      src={
+                        member.user?.profilePicture ||
+                        "https://ui-avatars.com/api/?name=" +
+                          encodeURIComponent(member.user?.name || "User")
+                      }
+                      alt={member.user?.name}
+                      className="w-12 h-12 rounded-full object-cover"
+                    />
+
+                    <div>
+
+                      <h3 className="font-semibold text-lg">
+                        {member.role === "Founder" ? "👑 " : "👤 "}
+                        {member.user?.name || "Unknown User"}
+                      </h3>
+
+                      <p className="text-gray-500">
+                        {member.role}
+                      </p>
+
+                    </div>
+
+                  </div>
+
+                </div>
+              ))}
+
+            </div>
+          ) : (
+            <p className="text-gray-500">
+              No team members yet.
+            </p>
+          )}
+
+        </div>
+
+        {/* ======================================== */}
+
+        <div className="flex gap-4 mt-10">
 
           <button className="bg-red-500 text-white px-6 py-3 rounded-lg hover:bg-red-600">
             ❤️ Like

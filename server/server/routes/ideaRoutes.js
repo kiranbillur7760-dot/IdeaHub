@@ -3,6 +3,7 @@ import express from "express";
 import {
   createIdea,
   getIdeas,
+  getIdeaById,
   getTrendingIdeas,
   searchIdeas,
   getMyIdeas,
@@ -46,6 +47,12 @@ router.get(
 router.get(
   "/search",
   searchIdeas
+);
+
+// Get Single Idea
+router.get(
+  "/:id",
+  getIdeaById
 );
 
 

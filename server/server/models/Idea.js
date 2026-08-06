@@ -1,5 +1,24 @@
 import mongoose from "mongoose";
 
+// 👥 Team Member Schema
+const teamMemberSchema = new mongoose.Schema({
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
+  },
+
+  role: {
+    type: String,
+    default: "Member",
+  },
+
+  joinedAt: {
+    type: Date,
+    default: Date.now,
+  },
+});
+
 const ideaSchema = new mongoose.Schema(
   {
     // 💡 Idea title
@@ -9,13 +28,11 @@ const ideaSchema = new mongoose.Schema(
       trim: true,
     },
 
-
     // 📝 Idea description
     description: {
       type: String,
       required: true,
     },
-
 
     // 🏷 Category
     category: {
@@ -24,20 +41,17 @@ const ideaSchema = new mongoose.Schema(
       trim: true,
     },
 
-
     // 🖼 Image
     image: {
       type: String,
       default: "",
     },
 
-
     // 👤 Display author name
     author: {
       type: String,
       default: "Anonymous",
     },
-
 
     // 👤 Idea creator
     userId: {
@@ -46,6 +60,8 @@ const ideaSchema = new mongoose.Schema(
       required: true,
     },
 
+    // 👥 Project Team
+    team: [teamMemberSchema],
 
     // ❤️ Users who liked the idea
     likes: [
@@ -55,27 +71,27 @@ const ideaSchema = new mongoose.Schema(
       },
     ],
 
-
-    // 💬 Number of comments
+    // 💬 Comments
     comments: [
-  {
-    user: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
-    },
-    text: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-    createdAt: {
-      type: Date,
-      default: Date.now,
-    },
-  },
-],
+      {
+        user: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "User",
+          required: true,
+        },
 
+        text: {
+          type: String,
+          required: true,
+          trim: true,
+        },
+
+        createdAt: {
+          type: Date,
+          default: Date.now,
+        },
+      },
+    ],
 
     // 🚀 Current idea development stage
     executionStatus: {
@@ -89,15 +105,13 @@ const ideaSchema = new mongoose.Schema(
       default: "new",
     },
 
-
-    // 👥 People working on this idea
+    // 👥 Collaborators (keep for now)
     collaborators: [
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
       },
     ],
-
 
     // 🏗 Connected project workspace
     project: {
@@ -106,8 +120,7 @@ const ideaSchema = new mongoose.Schema(
       default: null,
     },
 
-
-    // 🚩 Reported by users
+    // 🚩 Reports
     reports: [
       {
         userId: {
@@ -116,12 +129,10 @@ const ideaSchema = new mongoose.Schema(
           required: true,
         },
 
-
         reason: {
           type: String,
           required: true,
         },
-
 
         createdAt: {
           type: Date,
@@ -129,14 +140,10 @@ const ideaSchema = new mongoose.Schema(
         },
       },
     ],
-
-
   },
-
   {
     timestamps: true,
   }
 );
-
 
 export default mongoose.model("Idea", ideaSchema);

@@ -10,21 +10,34 @@ function NotificationBell() {
   const [count, setCount] = useState(0);
   const [open, setOpen] = useState(false);
 
-  useEffect(() => {
+ useEffect(() => {
+  const token = localStorage.getItem("token");
+
+  if (token) {
     loadNotifications();
-  }, []);
+  }
+}, []);
 
   const loadNotifications = async () => {
-    try {
-      const notificationRes = await getNotifications();
-      const countRes = await getUnreadCount();
+  try {
+    const token = localStorage.getItem("token");
 
-      setNotifications(notificationRes.data);
-      setCount(countRes.data.count);
-    } catch (error) {
-      console.error(error);
+    if (!token) return;
+
+    const notificationRes = await getNotifications();
+    const countRes = await getUnreadCount();
+
+    setNotifications(notificationRes.data);
+    setCount(countRes.data.count);
+  } catch (error) {
+    console.error("Notification Error:", error);
+
+    if (error.response?.status === 401) {
+      setNotifications([]);
+      setCount(0);
     }
-  };
+  }
+};
 
   const handleRead = async (id) => {
     try {

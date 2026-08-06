@@ -21,6 +21,14 @@ export const createIdea = async (req, res) => {
       image: image || "",
       author: req.user.name,
       userId: req.user._id,
+
+      // 👑 Creator automatically becomes the Founder
+      team: [
+        {
+          user: req.user._id,
+          role: "Founder",
+        },
+      ],
     });
 
     console.log("Idea Created Successfully");
@@ -30,6 +38,28 @@ export const createIdea = async (req, res) => {
   } catch (error) {
     console.error(error);
 
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+
+// =========================
+// Get Single Idea
+// =========================
+export const getIdeaById = async (req, res) => {
+  try {
+    const idea = await Idea.findById(req.params.id)
+      .populate("team.user", "name profilePicture bio");
+
+    if (!idea) {
+      return res.status(404).json({
+        message: "Idea not found",
+      });
+    }
+
+    res.json(idea);
+  } catch (error) {
     res.status(500).json({
       message: error.message,
     });
@@ -266,7 +296,9 @@ export const joinIdea = async (req, res) => {
 
     const userId = req.user._id.toString();
 
-    // Check if already joined
+    // =========================
+    // Collaborators
+    // =========================
     const alreadyJoined = idea.collaborators.some(
       (id) => id.toString() === userId
     );
@@ -279,9 +311,23 @@ export const joinIdea = async (req, res) => {
       }
     }
 
-    // --------------------------------
-    // Create Project if it doesn't exist
-    // --------------------------------
+    // =========================
+    // Team Members
+    // =========================
+    const alreadyInTeam = idea.team.some(
+      (member) => member.user.toString() === userId
+    );
+
+    if (!alreadyInTeam) {
+      idea.team.push({
+        user: req.user._id,
+        role: "Member",
+      });
+    }
+
+    // =========================
+    // Create Project if needed
+    // =========================
     let project;
 
     if (idea.project) {
@@ -312,7 +358,6 @@ export const joinIdea = async (req, res) => {
 
     await idea.save();
 
-    // Notification
     if (idea.userId.toString() !== userId) {
       await Notification.create({
         recipient: idea.userId,
