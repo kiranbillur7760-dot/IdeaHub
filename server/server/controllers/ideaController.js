@@ -336,13 +336,16 @@ export const joinIdea = async (req, res) => {
 
     if (!project) {
       project = await Project.create({
-        title: idea.title,
-        description: idea.description,
-        owner: idea.userId,
-        members: [idea.userId, ...idea.collaborators],
-        status: "active",
-        progress: 0,
-      });
+  ideaId: idea._id,
+  title: idea.title,
+  description: idea.description,
+  owner: idea.userId,
+  members: [idea.userId, ...idea.collaborators],
+  progress: 0,
+
+  // We will change this after checking your Project model
+  status: "planning",
+});
 
       idea.project = project._id;
     } else {
