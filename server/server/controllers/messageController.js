@@ -34,9 +34,11 @@ export const sendMessage = async (req, res) => {
     );
 
     res.status(201).json(populatedMessage);
-  } catch (error) {
-    res.status(500).json({
-      message: error.message,
-    });
-  }
+  }  catch (error) {
+  console.error("MESSAGE ERROR:", error);
+
+  res.status(500).json({
+    message: error.message,
+  });
+}
 };

@@ -273,28 +273,28 @@ const ProjectWorkspace = () => {
   // Send Message
   // ==========================================
 
-  const sendMessage = async () => {
-    if (!newMessage.trim()) return;
+ const sendMessage = async () => {
+  if (!newMessage.trim()) return;
 
-    try {
-      const res = await axios.post(
-        `${API_BASE}/messages`,
-        {
-          projectId,
-          message: newMessage.trim(),
-        },
-        authConfig
-      );
+  try {
+    const res = await axios.post(
+      `${API_BASE}/messages`,
+      {
+        project: projectId,
+        text: newMessage.trim(),
+      },
+      authConfig
+    );
 
-      socketRef.current.emit("sendMessage", res.data);
+    socketRef.current.emit("sendMessage", res.data);
 
-      setNewMessage("");
-    } catch (err) {
-      console.error(err);
+    setNewMessage("");
+  } catch (err) {
+    console.error(err);
 
-      alert(err.response?.data?.message || "Failed to send message.");
-    }
-  };
+    alert(err.response?.data?.message || "Failed to send message.");
+  }
+};
 
   // ==========================================
   // Enter Key
