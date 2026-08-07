@@ -337,11 +337,11 @@ export const joinIdea = async (req, res) => {
     if (!project) {
      
      
-const project = await Project.create({
+project = await Project.create({
   ideaId: idea._id,
   title: idea.title,
   description: idea.description,
-  owner: req.user._id,
+  owner: idea.userId,
   members: [
     {
       user: req.user._id,
