@@ -19,6 +19,7 @@ const notificationSchema = new mongoose.Schema(
         "like",
         "comment",
         "project_invite",
+        "collaboration",
         "task_assigned",
         "project_update",
       ],
