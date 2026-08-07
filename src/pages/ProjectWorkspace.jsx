@@ -274,9 +274,19 @@ const ProjectWorkspace = () => {
   // ==========================================
 
  const sendMessage = async () => {
-  if (!newMessage.trim()) return;
+  console.log("1. sendMessage called");
+
+  if (!newMessage.trim()) {
+    console.log("2. Message is empty");
+    return;
+  }
+
+  console.log("3. Message:", newMessage);
+  console.log("4. Project ID:", projectId);
 
   try {
+    console.log("5. Sending request...");
+
     const res = await axios.post(
       `${API_BASE}/messages`,
       {
@@ -286,13 +296,16 @@ const ProjectWorkspace = () => {
       authConfig
     );
 
-    socketRef.current.emit("sendMessage", res.data);
+    console.log("6. Success:", res.data);
 
-    setNewMessage("");
+setMessages((prev) => [...prev, res.data]);
+
+socketRef.current.emit("sendMessage", res.data);
+
+setNewMessage("");
   } catch (err) {
-    console.error(err);
-
-    alert(err.response?.data?.message || "Failed to send message.");
+    console.error("7. Error:", err);
+    console.error("Response:", err.response?.data);
   }
 };
 
@@ -1005,7 +1018,7 @@ const ProjectWorkspace = () => {
                     <span className="font-semibold">
                       {msg.sender?.name || "Someone"}:{" "}
                     </span>
-                    <span className="text-gray-700">{msg.message}</span>
+                    <span className="text-gray-700">{msg.text}</span>
                   </div>
                 ))
               )}
