@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">ideahub</string>
+    <string name="title_activity_main">ideahub</string>
+    <string name="package_name">com.ideahub.app</string>
+    <string name="custom_url_scheme">com.ideahub.app</string>
+</resources>
