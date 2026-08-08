@@ -1,7 +1,7 @@
+
 import { useEffect, useState } from "react";
 import API from "../services/api";
 
-import Navbar from "../components/Navbar";
 import Hero from "../components/Hero";
 import DashboardStats from "../components/DashboardStats";
 import SearchBar from "../components/SearchBar";
@@ -29,11 +29,7 @@ function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 via-white to-gray-100">
-
-      {/* Navbar */}
-      <Navbar />
-
+    <>
       {/* Hero */}
       <Hero />
 
@@ -52,9 +48,7 @@ function Home() {
 
       {/* Latest Ideas */}
       <section className="max-w-7xl mx-auto px-6 py-16">
-
         <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-10">
-
           <div>
             <span className="inline-block bg-blue-100 text-blue-700 px-4 py-1 rounded-full text-sm font-semibold mb-3">
               🚀 DISCOVER STARTUPS
@@ -76,34 +70,23 @@ function Home() {
               Explore All Ideas →
             </button>
           </div>
-
         </div>
 
         {loading ? (
-
           <div className="flex justify-center items-center py-24">
-
             <div className="animate-spin rounded-full h-14 w-14 border-b-4 border-blue-600"></div>
-
           </div>
-
         ) : ideas.length > 0 ? (
-
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
-
             {ideas.map((idea) => (
               <IdeaCard
                 key={idea._id}
                 idea={idea}
               />
             ))}
-
           </div>
-
         ) : (
-
           <div className="bg-white rounded-3xl shadow-lg border border-gray-100 p-16 text-center">
-
             <div className="text-7xl mb-6">
               💡
             </div>
@@ -119,18 +102,15 @@ function Home() {
             <button className="mt-8 bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-xl font-semibold transition">
               Share Your First Idea
             </button>
-
           </div>
-
         )}
-
       </section>
 
       {/* Footer */}
       <Footer />
-
-    </div>
+    </>
   );
 }
 
 export default Home;
+

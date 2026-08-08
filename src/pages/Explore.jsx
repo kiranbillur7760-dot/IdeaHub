@@ -1,7 +1,7 @@
+
 import { useEffect, useState } from "react";
 import API from "../services/api";
 
-import Navbar from "../components/Navbar";
 import SearchBar from "../components/SearchBar";
 import CategoryFilter from "../components/CategoryFilter";
 import IdeaCard from "../components/IdeaCard";
@@ -25,30 +25,23 @@ function Explore() {
     }
   };
 
-
   const filteredIdeas = ideas.filter((idea) => {
-
     const matchesSearch =
       idea.title.toLowerCase().includes(search.toLowerCase()) ||
       idea.description.toLowerCase().includes(search.toLowerCase());
-
 
     const matchesCategory =
       category === "All" ||
       idea.category === category;
 
-
     return matchesSearch && matchesCategory;
   });
 
-
   return (
-    <div className="min-h-screen bg-gray-50">
-
-      <Navbar />
+    <>
+      {/* Explore Header */}
 
       <section className="max-w-7xl mx-auto px-6 py-12">
-
         <h1 className="text-4xl font-bold mb-2">
           Explore Ideas 🚀
         </h1>
@@ -57,12 +50,14 @@ function Explore() {
           Discover innovative ideas shared by the community.
         </p>
 
+        {/* Search */}
 
         <SearchBar
           search={search}
           setSearch={setSearch}
         />
 
+        {/* Categories */}
 
         <div className="mt-6">
           <CategoryFilter
@@ -71,32 +66,30 @@ function Explore() {
           />
         </div>
 
+        {/* Ideas */}
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8 mt-10">
-
           {filteredIdeas.length > 0 ? (
-
             filteredIdeas.map((idea) => (
               <IdeaCard
                 key={idea._id}
                 idea={idea}
               />
             ))
-
           ) : (
-
-            <h2>No Ideas Found</h2>
-
+            <h2 className="text-gray-500">
+              No Ideas Found
+            </h2>
           )}
-
         </div>
-
       </section>
 
-      <Footer />
+      {/* Footer */}
 
-    </div>
+      <Footer />
+    </>
   );
 }
 
 export default Explore;
+

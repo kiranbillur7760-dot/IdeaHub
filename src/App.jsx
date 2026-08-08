@@ -1,3 +1,4 @@
+
 import { Routes, Route, Navigate } from "react-router-dom";
 
 import Login from "./pages/Login";
@@ -14,26 +15,45 @@ import SavedIdeas from "./pages/SavedIdeas";
 import Trending from "./pages/Trending";
 
 import ProtectedRoute from "./components/ProtectedRoute";
+import ProtectedLayout from "./components/ProtectedLayout";
 
 function App() {
+  const token = localStorage.getItem("token");
+
   return (
     <Routes>
 
-      {/* Redirect */}
-      <Route path="*" element={<Navigate to="/" replace />} />
+      {/* ========================= */}
+      {/* Root Route */}
+      {/* ========================= */}
 
-      {/* Public Routes */}
-      <Route path="/" element={<Login />} />
+      <Route
+        path="/"
+        element={
+          token ? <Navigate to="/home" replace /> : <Login />
+        }
+      />
 
-      <Route path="/register" element={<Register />} />
+      {/* ========================= */}
+      {/* Register */}
+      {/* ========================= */}
 
+      <Route
+        path="/register"
+        element={<Register />}
+      />
+
+      {/* ========================= */}
       {/* Protected Routes */}
+      {/* ========================= */}
 
       <Route
         path="/home"
         element={
           <ProtectedRoute>
-            <Home />
+            <ProtectedLayout>
+              <Home />
+            </ProtectedLayout>
           </ProtectedRoute>
         }
       />
@@ -42,7 +62,9 @@ function App() {
         path="/explore"
         element={
           <ProtectedRoute>
-            <Explore />
+            <ProtectedLayout>
+              <Explore />
+            </ProtectedLayout>
           </ProtectedRoute>
         }
       />
@@ -51,7 +73,9 @@ function App() {
         path="/create-idea"
         element={
           <ProtectedRoute>
-            <CreateIdea />
+            <ProtectedLayout>
+              <CreateIdea />
+            </ProtectedLayout>
           </ProtectedRoute>
         }
       />
@@ -60,7 +84,9 @@ function App() {
         path="/ideas/:id"
         element={
           <ProtectedRoute>
-            <IdeaDetails />
+            <ProtectedLayout>
+              <IdeaDetails />
+            </ProtectedLayout>
           </ProtectedRoute>
         }
       />
@@ -69,7 +95,9 @@ function App() {
         path="/edit-idea/:id"
         element={
           <ProtectedRoute>
-            <EditIdea />
+            <ProtectedLayout>
+              <EditIdea />
+            </ProtectedLayout>
           </ProtectedRoute>
         }
       />
@@ -78,7 +106,9 @@ function App() {
         path="/profile"
         element={
           <ProtectedRoute>
-            <Profile />
+            <ProtectedLayout>
+              <Profile />
+            </ProtectedLayout>
           </ProtectedRoute>
         }
       />
@@ -87,7 +117,9 @@ function App() {
         path="/edit-profile"
         element={
           <ProtectedRoute>
-            <EditProfile />
+            <ProtectedLayout>
+              <EditProfile />
+            </ProtectedLayout>
           </ProtectedRoute>
         }
       />
@@ -96,7 +128,9 @@ function App() {
         path="/saved"
         element={
           <ProtectedRoute>
-            <SavedIdeas />
+            <ProtectedLayout>
+              <SavedIdeas />
+            </ProtectedLayout>
           </ProtectedRoute>
         }
       />
@@ -105,7 +139,9 @@ function App() {
         path="/trending"
         element={
           <ProtectedRoute>
-            <Trending />
+            <ProtectedLayout>
+              <Trending />
+            </ProtectedLayout>
           </ProtectedRoute>
         }
       />
@@ -114,9 +150,20 @@ function App() {
         path="/projects/:projectId"
         element={
           <ProtectedRoute>
-            <ProjectWorkspace />
+            <ProtectedLayout>
+              <ProjectWorkspace />
+            </ProtectedLayout>
           </ProtectedRoute>
         }
+      />
+
+      {/* ========================= */}
+      {/* Unknown Route */}
+      {/* ========================= */}
+
+      <Route
+        path="*"
+        element={<Navigate to="/" replace />}
       />
 
     </Routes>
@@ -124,3 +171,4 @@ function App() {
 }
 
 export default App;
+

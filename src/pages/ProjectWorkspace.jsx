@@ -1,13 +1,14 @@
 import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { io } from "socket.io-client";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 
 const API_BASE = "https://ideahub-4-ybrb.onrender.com/api";
 const SOCKET_URL = "https://ideahub-4-ybrb.onrender.com";
 
 const ProjectWorkspace = () => {
   const { projectId } = useParams();
+  const navigate = useNavigate();
 
   const token = localStorage.getItem("token");
 
@@ -674,7 +675,23 @@ setNewMessage("");
   // ==========================================
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6">
+  <div className="min-h-screen bg-gray-50 p-6">
+
+    {/* Top Navigation */}
+
+    <div className="max-w-7xl mx-auto mb-6">
+      <button
+        onClick={() => navigate("/home")}
+        className="px-4 py-2 bg-white border rounded-xl shadow-sm hover:bg-blue-50 transition font-semibold text-gray-700"
+      >
+        🏠 Home
+      </button>
+    </div>
+
+    {/* Project Header */}
+
+    <div className="max-w-7xl mx-auto">
+      <div className="bg-white rounded-2xl shadow-sm border p-6 mb-6"></div>
       {/* Project Header */}
 
       <div className="bg-white rounded-2xl shadow-sm border p-6 mb-6">
@@ -1192,6 +1209,7 @@ setNewMessage("");
           </div>
         </div>
       )}
+    </div>
     </div>
   );
 };
