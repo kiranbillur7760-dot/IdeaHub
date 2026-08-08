@@ -284,8 +284,12 @@ export const likeIdea = async (req, res) => {
 // =========================
 // Join Idea
 // =========================
+
 export const joinIdea = async (req, res) => {
   try {
+    // =========================
+    // Find Idea
+    // =========================
     const idea = await Idea.findById(req.params.id);
 
     if (!idea) {
@@ -297,7 +301,7 @@ export const joinIdea = async (req, res) => {
     const userId = req.user._id.toString();
 
     // =========================
-    // Collaborators
+    // Add to Collaborators
     // =========================
     const alreadyJoined = idea.collaborators.some(
       (id) => id.toString() === userId
@@ -312,7 +316,7 @@ export const joinIdea = async (req, res) => {
     }
 
     // =========================
-    // Team Members
+    // Add to Idea Team
     // =========================
     const alreadyInTeam = idea.team.some(
       (member) => member.user.toString() === userId
@@ -326,7 +330,7 @@ export const joinIdea = async (req, res) => {
     }
 
     // =========================
-    // Create Project if needed
+    // Find Existing Project
     // =========================
     let project;
 
@@ -334,37 +338,43 @@ export const joinIdea = async (req, res) => {
       project = await Project.findById(idea.project);
     }
 
+    // =========================
+    // Create Project if Needed
+    // =========================
     if (!project) {
-     
-     
-project = await Project.create({
-  ideaId: idea._id,
-  title: idea.title,
-  description: idea.description,
-  owner: idea.userId,
-  members: [
-    {
-      user: req.user._id,
-      role: "owner"
-    }
-  ],
-  status: "planning"
-});
+      project = await Project.create({
+        ideaId: idea._id,
+        title: idea.title,
+        description: idea.description || "",
+        owner: idea.userId,
+        members: [idea.userId],
+        status: "planning",
+      });
 
       idea.project = project._id;
-    } else {
-      const exists = project.members.some(
-        (member) => member.toString() === userId
-      );
-
-      if (!exists) {
-        project.members.push(req.user._id);
-        await project.save();
-      }
     }
 
+    // =========================
+    // Add User to Project
+    // =========================
+    const alreadyProjectMember = project.members.some(
+      (member) => member.toString() === userId
+    );
+
+    if (!alreadyProjectMember) {
+      project.members.push(req.user._id);
+
+      await project.save();
+    }
+
+    // =========================
+    // Save Idea
+    // =========================
     await idea.save();
 
+    // =========================
+    // Send Notification
+    // =========================
     if (idea.userId.toString() !== userId) {
       await Notification.create({
         recipient: idea.userId,
@@ -375,11 +385,13 @@ project = await Project.create({
       });
     }
 
+    // =========================
+    // Success Response
+    // =========================
     return res.status(200).json({
       message: "Joined idea successfully 🚀",
       projectId: project._id,
     });
-
   } catch (error) {
     console.error("JOIN IDEA ERROR:", error);
 
@@ -388,6 +400,8 @@ project = await Project.create({
     });
   }
 };
+
+
 
 export const addComment = async (req, res) => {
   try {
