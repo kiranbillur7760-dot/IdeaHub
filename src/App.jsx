@@ -25,26 +25,26 @@ function App() {
 
   return (
     <Routes>
-
       {/* ========================= */}
       {/* Root Route */}
       {/* ========================= */}
 
       <Route
         path="/"
-        element={
-          token ? <Navigate to="/home" replace /> : <Login />
-        }
+        element={token ? <Navigate to="/home" replace /> : <Login />}
       />
+
+      {/* ========================= */}
+      {/* Login */}
+      {/* ========================= */}
+
+      <Route path="/login" element={<Login />} />
 
       {/* ========================= */}
       {/* Register */}
       {/* ========================= */}
 
-      <Route
-        path="/register"
-        element={<Register />}
-      />
+      <Route path="/register" element={<Register />} />
 
       {/* ========================= */}
       {/* Client Dashboard */}
@@ -58,17 +58,22 @@ function App() {
           </ProtectedRoute>
         }
       />
-      {/* ========================= */}
-{/* Public Project Discovery */}
-{/* ========================= */}
-
-<Route
-  path="/discover-project/:projectId"
-  element={<ProjectDiscovery />}
-/>
 
       {/* ========================= */}
-      {/* Protected Routes */}
+      {/* Client Project Discovery */}
+      {/* ========================= */}
+
+      <Route
+        path="/discover-project/:projectId"
+        element={
+          <ProtectedRoute>
+            <ProjectDiscovery />
+          </ProtectedRoute>
+        }
+      />
+
+      {/* ========================= */}
+      {/* Home */}
       {/* ========================= */}
 
       <Route
@@ -240,7 +245,6 @@ function App() {
         path="*"
         element={<Navigate to="/" replace />}
       />
-
     </Routes>
   );
 }
