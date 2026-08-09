@@ -1,3 +1,4 @@
+
 import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema(
@@ -6,19 +7,21 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-     followers: [
-  {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
-  },
-],
 
-following: [
-  {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
-  },
-],
+    followers: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
+
+    following: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
+
     email: {
       type: String,
       required: true,
@@ -29,12 +32,13 @@ following: [
       type: String,
       required: true,
     },
+
     savedIdeas: [
-  {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Idea",
-  },
-],
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Idea",
+      },
+    ],
 
     bio: {
       type: String,
@@ -44,6 +48,13 @@ following: [
     profileImage: {
       type: String,
       default: "",
+    },
+
+    // User type
+    role: {
+      type: String,
+      enum: ["user", "client"],
+      default: "user",
     },
   },
   {
