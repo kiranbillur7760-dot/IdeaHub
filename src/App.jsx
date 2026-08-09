@@ -16,6 +16,7 @@ import Trending from "./pages/Trending";
 import PersonalChat from "./pages/PersonalChat";
 import ClientDashboard from "./pages/ClientDashboard";
 import ProjectDiscovery from "./pages/ProjectDiscovery";
+import ClientRequests from "./pages/ClientRequests";
 
 import ProtectedRoute from "./components/ProtectedRoute";
 import ProtectedLayout from "./components/ProtectedLayout";
@@ -31,20 +32,32 @@ function App() {
 
       <Route
         path="/"
-        element={token ? <Navigate to="/home" replace /> : <Login />}
+        element={
+          token ? (
+            <Navigate to="/home" replace />
+          ) : (
+            <Login />
+          )
+        }
       />
 
       {/* ========================= */}
       {/* Login */}
       {/* ========================= */}
 
-      <Route path="/login" element={<Login />} />
+      <Route
+        path="/login"
+        element={<Login />}
+      />
 
       {/* ========================= */}
       {/* Register */}
       {/* ========================= */}
 
-      <Route path="/register" element={<Register />} />
+      <Route
+        path="/register"
+        element={<Register />}
+      />
 
       {/* ========================= */}
       {/* Client Dashboard */}
@@ -55,6 +68,19 @@ function App() {
         element={
           <ProtectedRoute>
             <ClientDashboard />
+          </ProtectedRoute>
+        }
+      />
+
+      {/* ========================= */}
+      {/* Client Requests */}
+      {/* ========================= */}
+
+      <Route
+        path="/client-requests"
+        element={
+          <ProtectedRoute>
+            <ClientRequests />
           </ProtectedRoute>
         }
       />
