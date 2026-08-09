@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import API from "../services/api";
 
@@ -6,6 +7,7 @@ function Register() {
     name: "",
     email: "",
     password: "",
+    role: "user",
   });
 
   const handleChange = (e) => {
@@ -34,13 +36,14 @@ function Register() {
   };
 
   return (
-    <div className="max-w-md mx-auto mt-16 bg-white shadow-lg rounded-xl p-8">
-      <h1 className="text-3xl font-bold mb-6 text-center">
+    <div className="max-w-md mx-auto mt-10">
+      <h1 className="text-3xl font-bold text-center mb-6">
         Create Account
       </h1>
 
       <form onSubmit={handleSubmit} className="space-y-5">
 
+        {/* Name */}
         <input
           type="text"
           name="name"
@@ -50,6 +53,7 @@ function Register() {
           required
         />
 
+        {/* Email */}
         <input
           type="email"
           name="email"
@@ -59,6 +63,7 @@ function Register() {
           required
         />
 
+        {/* Password */}
         <input
           type="password"
           name="password"
@@ -68,7 +73,31 @@ function Register() {
           required
         />
 
+        {/* Account Type */}
+        <div>
+          <label className="block mb-2 font-medium">
+            Account Type
+          </label>
+
+          <select
+            name="role"
+            value={form.role}
+            onChange={handleChange}
+            className="w-full border p-3 rounded-lg"
+          >
+            <option value="user">
+              Creator / Team Member
+            </option>
+
+            <option value="client">
+              Client
+            </option>
+          </select>
+        </div>
+
+        {/* Register */}
         <button
+          type="submit"
           className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700"
         >
           Register

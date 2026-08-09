@@ -6,6 +6,7 @@ import authMiddleware from "../middleware/authMiddleware.js";
 import {
   createProject,
   getProject,
+  getPublicProject,
   addProjectMember,
   removeProjectMember,
 } from "../controllers/projectController.js";
@@ -21,6 +22,14 @@ router.post(
   "/",
   authMiddleware,
   createProject
+);
+// ==========================================
+// GET PUBLIC PROJECT FOR CLIENTS
+// ==========================================
+
+router.get(
+  "/discover/:id",
+  getPublicProject
 );
 
 

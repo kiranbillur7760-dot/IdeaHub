@@ -17,6 +17,7 @@ import collaborationRoutes from "./routes/collaborationRoutes.js";
 import notificationRoutes from "./routes/notificationRoutes.js";
 import uploadRoutes from "./routes/uploadRoutes.js";
 import messageRoutes from "./routes/messageRoutes.js";
+import clientRequestRoutes from "./routes/clientRequestRoutes.js";
 
 import PersonalMessage from "./models/PersonalMessage.js";
 
@@ -109,6 +110,7 @@ app.use("/api/upload", uploadRoutes);
 
 app.use("/api/messages", messageRoutes);
 
+app.use("/api/client-requests", clientRequestRoutes);
 // ==========================
 // Test Route
 // ==========================

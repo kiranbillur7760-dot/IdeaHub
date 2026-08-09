@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import API from "../services/api";
@@ -46,9 +47,17 @@ function Login() {
       console.log("Stored User:");
       console.log(localStorage.getItem("user"));
 
+      // Redirect based on user role
       setTimeout(() => {
-        console.log("Navigating to /home...");
-        navigate("/home", { replace: true });
+        console.log("Checking user role...");
+
+        if (res.data.user.role === "client") {
+          console.log("Client detected → Client Dashboard");
+          navigate("/client-dashboard", { replace: true });
+        } else {
+          console.log("Normal user detected → Home");
+          navigate("/home", { replace: true });
+        }
       }, 1000);
 
     } catch (err) {
@@ -65,7 +74,7 @@ function Login() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
-      <div className="w-full max-w-md bg-white shadow-lg rounded-xl p-8">
+      <div className="bg-white p-8 rounded-xl shadow-md w-full max-w-md">
 
         <h1 className="text-3xl font-bold text-center mb-8">
           Login to IdeaHub
@@ -73,6 +82,7 @@ function Login() {
 
         <form onSubmit={handleSubmit} className="space-y-5">
 
+          {/* Email */}
           <input
             type="email"
             name="email"
@@ -83,6 +93,7 @@ function Login() {
             required
           />
 
+          {/* Password */}
           <input
             type="password"
             name="password"
@@ -93,6 +104,7 @@ function Login() {
             required
           />
 
+          {/* Login Button */}
           <button
             type="submit"
             className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700"

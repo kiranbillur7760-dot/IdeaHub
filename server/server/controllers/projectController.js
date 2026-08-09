@@ -191,3 +191,29 @@ export const getProject = async (req, res) => {
     });
   }
 };
+// GET PUBLIC PROJECT FOR CLIENT DISCOVERY
+export const getPublicProject = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const project = await Project.findById(id)
+      .populate("owner", "name email")
+      .populate("members", "name email");
+
+    if (!project) {
+      return res.status(404).json({
+        message: "Project not found",
+      });
+    }
+
+    return res.status(200).json({
+      project,
+    });
+  } catch (error) {
+    console.error("Get public project error:", error);
+
+    return res.status(500).json({
+      message: "Server error",
+    });
+  }
+};

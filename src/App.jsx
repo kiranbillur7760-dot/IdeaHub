@@ -14,6 +14,8 @@ import EditIdea from "./pages/EditIdea";
 import SavedIdeas from "./pages/SavedIdeas";
 import Trending from "./pages/Trending";
 import PersonalChat from "./pages/PersonalChat";
+import ClientDashboard from "./pages/ClientDashboard";
+import ProjectDiscovery from "./pages/ProjectDiscovery";
 
 import ProtectedRoute from "./components/ProtectedRoute";
 import ProtectedLayout from "./components/ProtectedLayout";
@@ -45,6 +47,27 @@ function App() {
       />
 
       {/* ========================= */}
+      {/* Client Dashboard */}
+      {/* ========================= */}
+
+      <Route
+        path="/client-dashboard"
+        element={
+          <ProtectedRoute>
+            <ClientDashboard />
+          </ProtectedRoute>
+        }
+      />
+      {/* ========================= */}
+{/* Public Project Discovery */}
+{/* ========================= */}
+
+<Route
+  path="/discover-project/:projectId"
+  element={<ProjectDiscovery />}
+/>
+
+      {/* ========================= */}
       {/* Protected Routes */}
       {/* ========================= */}
 
@@ -58,10 +81,25 @@ function App() {
           </ProtectedRoute>
         }
       />
+
+      {/* ========================= */}
+      {/* Personal Chat */}
+      {/* ========================= */}
+
       <Route
-  path="/personal-chat/:userId"
-  element={<PersonalChat />}
-/>
+        path="/personal-chat/:userId"
+        element={
+          <ProtectedRoute>
+            <ProtectedLayout>
+              <PersonalChat />
+            </ProtectedLayout>
+          </ProtectedRoute>
+        }
+      />
+
+      {/* ========================= */}
+      {/* Explore */}
+      {/* ========================= */}
 
       <Route
         path="/explore"
@@ -74,6 +112,10 @@ function App() {
         }
       />
 
+      {/* ========================= */}
+      {/* Create Idea */}
+      {/* ========================= */}
+
       <Route
         path="/create-idea"
         element={
@@ -84,6 +126,10 @@ function App() {
           </ProtectedRoute>
         }
       />
+
+      {/* ========================= */}
+      {/* Idea Details */}
+      {/* ========================= */}
 
       <Route
         path="/ideas/:id"
@@ -96,6 +142,10 @@ function App() {
         }
       />
 
+      {/* ========================= */}
+      {/* Edit Idea */}
+      {/* ========================= */}
+
       <Route
         path="/edit-idea/:id"
         element={
@@ -106,6 +156,10 @@ function App() {
           </ProtectedRoute>
         }
       />
+
+      {/* ========================= */}
+      {/* Profile */}
+      {/* ========================= */}
 
       <Route
         path="/profile"
@@ -118,6 +172,10 @@ function App() {
         }
       />
 
+      {/* ========================= */}
+      {/* Edit Profile */}
+      {/* ========================= */}
+
       <Route
         path="/edit-profile"
         element={
@@ -128,6 +186,10 @@ function App() {
           </ProtectedRoute>
         }
       />
+
+      {/* ========================= */}
+      {/* Saved Ideas */}
+      {/* ========================= */}
 
       <Route
         path="/saved"
@@ -140,6 +202,10 @@ function App() {
         }
       />
 
+      {/* ========================= */}
+      {/* Trending */}
+      {/* ========================= */}
+
       <Route
         path="/trending"
         element={
@@ -150,6 +216,10 @@ function App() {
           </ProtectedRoute>
         }
       />
+
+      {/* ========================= */}
+      {/* Project Workspace */}
+      {/* ========================= */}
 
       <Route
         path="/projects/:projectId"
@@ -176,4 +246,3 @@ function App() {
 }
 
 export default App;
-
