@@ -13,6 +13,7 @@ import EditProfile from "./pages/EditProfile";
 import EditIdea from "./pages/EditIdea";
 import SavedIdeas from "./pages/SavedIdeas";
 import Trending from "./pages/Trending";
+import PersonalChat from "./pages/PersonalChat";
 
 import ProtectedRoute from "./components/ProtectedRoute";
 import ProtectedLayout from "./components/ProtectedLayout";
@@ -57,6 +58,10 @@ function App() {
           </ProtectedRoute>
         }
       />
+      <Route
+  path="/personal-chat/:userId"
+  element={<PersonalChat />}
+/>
 
       <Route
         path="/explore"

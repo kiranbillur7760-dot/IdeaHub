@@ -401,9 +401,10 @@ navigate(`/projects/${res.data.projectId}`);
           likes={likes}
           comments={comments.length}
         />
-
+        
         <AuthorInfo
           author={idea.author}
+          userId={idea.userId}
         />
 
         <IdeaActions
