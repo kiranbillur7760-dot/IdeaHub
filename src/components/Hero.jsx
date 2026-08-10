@@ -1,51 +1,55 @@
+
 import { Link } from "react-router-dom";
 import { FaRocket, FaLightbulb, FaUsers } from "react-icons/fa";
 
 function Hero() {
   return (
-    <section className="relative overflow-hidden bg-gradient-to-r from-blue-700 via-indigo-700 to-purple-700 text-white">
+    <section className="relative w-full overflow-hidden bg-gradient-to-br from-blue-700 via-blue-600 to-purple-700 text-white">
 
       {/* Background Blur */}
-      <div className="absolute -top-20 -left-20 w-72 h-72 bg-white/10 rounded-full blur-3xl"></div>
-      <div className="absolute bottom-0 right-0 w-96 h-96 bg-pink-500/20 rounded-full blur-3xl"></div>
+      <div className="absolute -top-20 -left-20 w-48 h-48 sm:w-72 sm:h-72 bg-white/10 rounded-full blur-3xl pointer-events-none"></div>
 
-      <div className="relative max-w-7xl mx-auto px-6 py-24">
+      <div className="absolute -bottom-20 -right-20 w-64 h-64 sm:w-96 sm:h-96 bg-pink-500/20 rounded-full blur-3xl pointer-events-none"></div>
 
-        <div className="grid lg:grid-cols-2 gap-16 items-center">
+      {/* Content */}
+      <div className="relative w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-24">
 
-          {/* Left Side */}
-          <div>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
 
-            <span className="inline-block bg-white/20 px-4 py-2 rounded-full text-sm font-semibold mb-6 backdrop-blur">
+          {/* ================= LEFT SIDE ================= */}
+          <div className="w-full min-w-0">
+
+            <span className="inline-block bg-white/20 px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-semibold mb-5 sm:mb-6 backdrop-blur">
               🚀 Build the Future Together
             </span>
 
-            <h1 className="text-5xl md:text-6xl font-extrabold leading-tight">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight break-words">
               Turn Your
               <span className="text-yellow-300"> Ideas </span>
               Into Successful
-              <br />
+              <br className="hidden sm:block" />
               Startups
             </h1>
 
-            <p className="mt-6 text-lg text-blue-100 leading-8 max-w-xl">
+            <p className="mt-5 sm:mt-6 text-sm sm:text-base lg:text-lg text-blue-100 leading-7 sm:leading-8 max-w-xl">
               IdeaHub connects innovators, developers, designers,
               entrepreneurs, and investors to collaborate on
               groundbreaking startup ideas.
             </p>
 
-            <div className="flex flex-wrap gap-4 mt-10">
+            {/* Buttons */}
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mt-7 sm:mt-10">
 
               <Link
                 to="/explore"
-                className="bg-white text-blue-700 px-8 py-4 rounded-xl font-bold hover:scale-105 transition shadow-xl"
+                className="w-full sm:w-auto text-center bg-white text-blue-700 px-6 sm:px-8 py-3 sm:py-4 rounded-xl font-bold hover:scale-105 transition shadow-xl"
               >
                 Explore Ideas
               </Link>
 
               <Link
-                to="/create"
-                className="border-2 border-white px-8 py-4 rounded-xl font-bold hover:bg-white hover:text-blue-700 transition"
+                to="/create-idea"
+                className="w-full sm:w-auto text-center border-2 border-white px-6 sm:px-8 py-3 sm:py-4 rounded-xl font-bold hover:bg-white hover:text-blue-700 transition"
               >
                 Share Your Idea
               </Link>
@@ -54,23 +58,24 @@ function Hero() {
 
           </div>
 
-          {/* Right Side */}
-          <div className="grid gap-6">
+          {/* ================= RIGHT SIDE ================= */}
+          <div className="w-full min-w-0 grid gap-4 sm:gap-6">
 
-            <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 shadow-xl">
+            {/* Startup Ideas */}
+            <div className="w-full bg-white/10 backdrop-blur-lg rounded-2xl p-4 sm:p-6 border border-white/20 shadow-xl">
 
-              <div className="flex items-center gap-4">
+              <div className="flex items-start gap-3 sm:gap-4">
 
-                <div className="bg-yellow-400 text-black p-4 rounded-xl text-2xl">
+                <div className="flex-shrink-0 bg-yellow-400 text-black p-3 sm:p-4 rounded-xl text-xl sm:text-2xl">
                   <FaLightbulb />
                 </div>
 
-                <div>
-                  <h3 className="font-bold text-xl">
+                <div className="min-w-0">
+                  <h3 className="font-bold text-lg sm:text-xl">
                     1000+ Startup Ideas
                   </h3>
 
-                  <p className="text-blue-100">
+                  <p className="text-blue-100 text-sm sm:text-base mt-1">
                     Discover innovative ideas from creators worldwide.
                   </p>
                 </div>
@@ -79,20 +84,21 @@ function Hero() {
 
             </div>
 
-            <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 shadow-xl">
+            {/* Collaborate */}
+            <div className="w-full bg-white/10 backdrop-blur-lg rounded-2xl p-4 sm:p-6 border border-white/20 shadow-xl">
 
-              <div className="flex items-center gap-4">
+              <div className="flex items-start gap-3 sm:gap-4">
 
-                <div className="bg-green-400 text-black p-4 rounded-xl text-2xl">
+                <div className="flex-shrink-0 bg-green-400 text-black p-3 sm:p-4 rounded-xl text-xl sm:text-2xl">
                   <FaUsers />
                 </div>
 
-                <div>
-                  <h3 className="font-bold text-xl">
+                <div className="min-w-0">
+                  <h3 className="font-bold text-lg sm:text-xl">
                     Collaborate with Teams
                   </h3>
 
-                  <p className="text-blue-100">
+                  <p className="text-blue-100 text-sm sm:text-base mt-1">
                     Join projects and build startups together.
                   </p>
                 </div>
@@ -101,20 +107,21 @@ function Hero() {
 
             </div>
 
-            <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 shadow-xl">
+            {/* Launch */}
+            <div className="w-full bg-white/10 backdrop-blur-lg rounded-2xl p-4 sm:p-6 border border-white/20 shadow-xl">
 
-              <div className="flex items-center gap-4">
+              <div className="flex items-start gap-3 sm:gap-4">
 
-                <div className="bg-red-400 text-black p-4 rounded-xl text-2xl">
+                <div className="flex-shrink-0 bg-red-400 text-black p-3 sm:p-4 rounded-xl text-xl sm:text-2xl">
                   <FaRocket />
                 </div>
 
-                <div>
-                  <h3 className="font-bold text-xl">
+                <div className="min-w-0">
+                  <h3 className="font-bold text-lg sm:text-xl">
                     Launch Your Startup
                   </h3>
 
-                  <p className="text-blue-100">
+                  <p className="text-blue-100 text-sm sm:text-base mt-1">
                     Transform ideas into successful businesses.
                   </p>
                 </div>
@@ -128,7 +135,6 @@ function Hero() {
         </div>
 
       </div>
-
     </section>
   );
 }

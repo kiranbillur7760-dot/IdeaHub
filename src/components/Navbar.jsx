@@ -35,21 +35,21 @@ function Navbar() {
     <nav className="w-full bg-white border-b border-gray-100 shadow-sm relative z-50">
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-        {/* ================= DESKTOP / MOBILE HEADER ================= */}
+        {/* Header */}
         <div className="min-h-20 flex items-center justify-between gap-4">
 
-          {/* ================= LOGO ================= */}
+          {/* Logo */}
           <Link
             to="/home"
             onClick={closeMenu}
-            className="flex items-center gap-2 sm:gap-3 group min-w-0"
+            className="flex items-center gap-2 sm:gap-3 min-w-0"
           >
-            <div className="w-10 h-10 sm:w-12 sm:h-12 flex-shrink-0 rounded-xl sm:rounded-2xl bg-gradient-to-r from-blue-600 to-purple-600 flex items-center justify-center text-white text-xl sm:text-2xl shadow-lg group-hover:scale-105 transition">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 flex-shrink-0 rounded-xl sm:rounded-2xl bg-gradient-to-r from-blue-600 to-purple-600 flex items-center justify-center text-white text-xl sm:text-2xl shadow-lg">
               💡
             </div>
 
             <div className="min-w-0">
-              <h1 className="text-xl sm:text-2xl font-extrabold text-gray-800 leading-tight">
+              <h1 className="text-xl sm:text-2xl font-extrabold text-gray-800">
                 IdeaHub
               </h1>
 
@@ -59,7 +59,7 @@ function Navbar() {
             </div>
           </Link>
 
-          {/* ================= DESKTOP NAVIGATION ================= */}
+          {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center gap-2">
 
             <Link
@@ -98,7 +98,7 @@ function Navbar() {
 
                 <Link
                   to="/create-idea"
-                  className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2.5 rounded-xl font-semibold hover:scale-105 transition shadow-lg whitespace-nowrap"
+                  className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2.5 rounded-xl font-semibold shadow-lg whitespace-nowrap"
                 >
                   + Create
                 </Link>
@@ -108,7 +108,7 @@ function Navbar() {
                 <Link
                   to="/profile"
                   title="Profile"
-                  className="w-11 h-11 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold flex items-center justify-center shadow-lg hover:scale-105 transition"
+                  className="w-11 h-11 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold flex items-center justify-center shadow-lg"
                 >
                   {user?.name
                     ? user.name.charAt(0).toUpperCase()
@@ -144,27 +144,26 @@ function Navbar() {
             )}
           </div>
 
-          {/* ================= MOBILE MENU BUTTON ================= */}
+          {/* Mobile Menu Button */}
           <button
             type="button"
             onClick={() => setMenuOpen(!menuOpen)}
-            className="lg:hidden flex-shrink-0 w-11 h-11 rounded-xl bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-2xl transition"
+            className="lg:hidden flex-shrink-0 w-11 h-11 rounded-xl bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-2xl"
             aria-label="Toggle navigation menu"
           >
             {menuOpen ? "✕" : "☰"}
           </button>
         </div>
 
-        {/* ================= MOBILE MENU ================= */}
+        {/* Mobile Navigation */}
         {menuOpen && (
           <div className="lg:hidden border-t border-gray-100 py-4">
-
             <div className="flex flex-col gap-2">
 
               <Link
                 to="/home"
                 onClick={closeMenu}
-                className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-blue-50 text-gray-700 font-medium transition"
+                className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-blue-50 text-gray-700 font-medium"
               >
                 🏠
                 <span>Home</span>
@@ -173,7 +172,7 @@ function Navbar() {
               <Link
                 to="/explore"
                 onClick={closeMenu}
-                className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-blue-50 text-gray-700 font-medium transition"
+                className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-blue-50 text-gray-700 font-medium"
               >
                 🔍
                 <span>Explore</span>
@@ -182,7 +181,7 @@ function Navbar() {
               <Link
                 to="/trending"
                 onClick={closeMenu}
-                className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-orange-50 text-gray-700 font-medium transition"
+                className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-orange-50 text-gray-700 font-medium"
               >
                 🔥
                 <span>Trending</span>
@@ -193,7 +192,7 @@ function Navbar() {
                   <Link
                     to="/saved"
                     onClick={closeMenu}
-                    className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-yellow-50 text-gray-700 font-medium transition"
+                    className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-yellow-50 text-gray-700 font-medium"
                   >
                     🔖
                     <span>Saved Ideas</span>
@@ -208,7 +207,7 @@ function Navbar() {
                     <span>Create Idea</span>
                   </Link>
 
-                  <div className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-50">
+                  <div className="flex items-center gap-3 px-4 py-3 rounded-xl">
                     <NotificationBell />
                     <span className="text-gray-700 font-medium">
                       Notifications
@@ -218,7 +217,7 @@ function Navbar() {
                   <Link
                     to="/profile"
                     onClick={closeMenu}
-                    className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-blue-50 text-gray-700 font-medium transition"
+                    className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-blue-50 text-gray-700 font-medium"
                   >
                     <div className="w-9 h-9 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold flex items-center justify-center">
                       {user?.name
@@ -231,7 +230,7 @@ function Navbar() {
 
                   <button
                     onClick={handleLogout}
-                    className="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-red-500 text-white font-medium hover:bg-red-600 transition"
+                    className="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-red-500 text-white font-medium hover:bg-red-600"
                   >
                     🚪
                     <span>Logout</span>
@@ -244,7 +243,7 @@ function Navbar() {
                   <Link
                     to="/"
                     onClick={closeMenu}
-                    className="text-center px-5 py-3 rounded-xl bg-blue-600 text-white hover:bg-blue-700 transition font-medium"
+                    className="text-center px-5 py-3 rounded-xl bg-blue-600 text-white font-medium"
                   >
                     Login
                   </Link>
@@ -252,7 +251,7 @@ function Navbar() {
                   <Link
                     to="/register"
                     onClick={closeMenu}
-                    className="text-center px-5 py-3 rounded-xl border border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white transition font-medium"
+                    className="text-center px-5 py-3 rounded-xl border border-blue-600 text-blue-600 font-medium"
                   >
                     Register
                   </Link>
@@ -262,6 +261,7 @@ function Navbar() {
             </div>
           </div>
         )}
+
       </div>
     </nav>
   );
