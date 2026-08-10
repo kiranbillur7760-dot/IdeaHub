@@ -29,88 +29,120 @@ function Home() {
   };
 
   return (
-    <>
-      {/* Hero */}
-      <Hero />
+    <div className="w-full min-h-screen bg-gray-50 overflow-x-hidden">
 
-      {/* Dashboard Statistics */}
-      <DashboardStats />
+      {/* ==================== HERO ==================== */}
+      <section className="w-full">
+        <Hero />
+      </section>
 
-      {/* Search */}
-      <section className="max-w-7xl mx-auto px-6 pt-10">
+      {/* ==================== DASHBOARD STATS ==================== */}
+      <section className="w-full">
+        <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <DashboardStats />
+        </div>
+      </section>
+
+      {/* ==================== SEARCH ==================== */}
+      <section className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-10">
         <SearchBar />
       </section>
 
-      {/* Categories */}
-      <section className="max-w-7xl mx-auto px-6 pt-6">
+      {/* ==================== CATEGORIES ==================== */}
+      <section className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 sm:pt-6">
         <CategoryFilter />
       </section>
 
-      {/* Latest Ideas */}
-      <section className="max-w-7xl mx-auto px-6 py-16">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-10">
-          <div>
-            <span className="inline-block bg-blue-100 text-blue-700 px-4 py-1 rounded-full text-sm font-semibold mb-3">
+      {/* ==================== LATEST IDEAS ==================== */}
+      <section className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14 lg:py-16">
+
+        {/* Header */}
+        <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-8 sm:mb-10">
+
+          {/* Heading */}
+          <div className="w-full max-w-3xl">
+
+            <span className="inline-block bg-blue-100 text-blue-700 px-3 sm:px-4 py-1.5 rounded-full text-xs sm:text-sm font-semibold mb-3">
               🚀 DISCOVER STARTUPS
             </span>
 
-            <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-gray-900 leading-tight">
               Latest Ideas
             </h2>
 
-            <p className="text-gray-600 mt-3 max-w-2xl">
+            <p className="text-gray-600 mt-3 text-sm sm:text-base leading-relaxed">
               Explore innovative ideas shared by entrepreneurs,
               developers, designers, and creators from around the world.
               Collaborate, build projects, and transform ideas into reality.
             </p>
+
           </div>
 
-          <div className="mt-6 md:mt-0">
-            <button className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-semibold transition duration-300 shadow-lg hover:shadow-xl">
+          {/* Explore Button */}
+          <div className="w-full lg:w-auto">
+            <button
+              type="button"
+              className="w-full lg:w-auto bg-blue-600 hover:bg-blue-700 text-white px-5 sm:px-6 py-3 rounded-xl font-semibold transition duration-300 shadow-lg hover:shadow-xl"
+            >
               Explore All Ideas →
             </button>
           </div>
+
         </div>
 
-        {loading ? (
-          <div className="flex justify-center items-center py-24">
-            <div className="animate-spin rounded-full h-14 w-14 border-b-4 border-blue-600"></div>
+        {/* ==================== LOADING ==================== */}
+        {loading && (
+          <div className="flex justify-center items-center py-16 sm:py-24">
+            <div className="animate-spin rounded-full h-12 w-12 sm:h-14 sm:w-14 border-b-4 border-blue-600"></div>
           </div>
-        ) : ideas.length > 0 ? (
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        )}
+
+        {/* ==================== IDEAS ==================== */}
+        {!loading && ideas.length > 0 && (
+          <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 lg:gap-8">
             {ideas.map((idea) => (
-              <IdeaCard
-                key={idea._id}
-                idea={idea}
-              />
+              <div key={idea._id} className="w-full min-w-0">
+                <IdeaCard idea={idea} />
+              </div>
             ))}
           </div>
-        ) : (
-          <div className="bg-white rounded-3xl shadow-lg border border-gray-100 p-16 text-center">
-            <div className="text-7xl mb-6">
+        )}
+
+        {/* ==================== NO IDEAS ==================== */}
+        {!loading && ideas.length === 0 && (
+          <div className="w-full bg-white rounded-2xl sm:rounded-3xl shadow-lg border border-gray-100 p-8 sm:p-12 lg:p-16 text-center">
+
+            <div className="text-5xl sm:text-7xl mb-5 sm:mb-6">
               💡
             </div>
 
-            <h3 className="text-3xl font-bold text-gray-800">
+            <h3 className="text-2xl sm:text-3xl font-bold text-gray-800">
               No Ideas Yet
             </h3>
 
-            <p className="text-gray-500 mt-4 text-lg">
+            <p className="text-gray-500 mt-3 sm:mt-4 text-sm sm:text-lg leading-relaxed max-w-xl mx-auto">
               Be the first innovator to share an amazing startup idea.
             </p>
 
-            <button className="mt-8 bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-xl font-semibold transition">
+            <button
+              type="button"
+              className="mt-6 sm:mt-8 w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white px-6 sm:px-8 py-3 rounded-xl font-semibold transition"
+            >
               Share Your First Idea
             </button>
+
           </div>
         )}
+
       </section>
 
-      {/* Footer */}
-      <Footer />
-    </>
+      {/* ==================== FOOTER ==================== */}
+      <footer className="w-full">
+        <Footer />
+      </footer>
+
+    </div>
   );
 }
 
 export default Home;
-
