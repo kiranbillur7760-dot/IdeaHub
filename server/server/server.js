@@ -18,6 +18,8 @@ import notificationRoutes from "./routes/notificationRoutes.js";
 import uploadRoutes from "./routes/uploadRoutes.js";
 import messageRoutes from "./routes/messageRoutes.js";
 import clientRequestRoutes from "./routes/clientRequestRoutes.js";
+import aiRoutes from "./routes/aiRoutes.js";
+import chatRoutes from "./routes/chatRoutes.js";
 
 import PersonalMessage from "./models/PersonalMessage.js";
 
@@ -111,6 +113,11 @@ app.use("/api/upload", uploadRoutes);
 app.use("/api/messages", messageRoutes);
 
 app.use("/api/client-requests", clientRequestRoutes);
+
+app.use("/api/ai", aiRoutes);
+
+app.use("/api/chats", chatRoutes);
+
 // ==========================
 // Test Route
 // ==========================

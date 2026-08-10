@@ -17,6 +17,7 @@ import PersonalChat from "./pages/PersonalChat";
 import ClientDashboard from "./pages/ClientDashboard";
 import ProjectDiscovery from "./pages/ProjectDiscovery";
 import ClientRequests from "./pages/ClientRequests";
+import AIChat from "./pages/AIChat";
 
 import ProtectedRoute from "./components/ProtectedRoute";
 import ProtectedLayout from "./components/ProtectedLayout";
@@ -85,6 +86,7 @@ function App() {
           </ProtectedRoute>
         }
       />
+      <Route path="/ai" element={<ProtectedRoute><AIChat /></ProtectedRoute>} />
 
       {/* ========================= */}
       {/* Client Project Discovery */}
