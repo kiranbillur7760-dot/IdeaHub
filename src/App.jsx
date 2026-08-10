@@ -26,6 +26,7 @@ function App() {
 
   return (
     <Routes>
+
       {/* ========================= */}
       {/* Root Route */}
       {/* ========================= */}
@@ -271,6 +272,7 @@ function App() {
         path="*"
         element={<Navigate to="/" replace />}
       />
+
     </Routes>
   );
 }

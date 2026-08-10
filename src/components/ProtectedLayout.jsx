@@ -3,15 +3,18 @@ import Navbar from "./Navbar";
 
 function ProtectedLayout({ children }) {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="w-full min-h-screen overflow-x-hidden bg-gray-50">
+
+      {/* Navbar */}
       <Navbar />
 
-      <main>
+      {/* Page Content */}
+      <main className="w-full min-w-0">
         {children}
       </main>
+
     </div>
   );
 }
 
 export default ProtectedLayout;
-
