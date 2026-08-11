@@ -14,10 +14,14 @@ function Social() {
   const [loading, setLoading] = useState(true);
   const [posting, setPosting] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+
   const [error, setError] = useState("");
 
   const [user, setUser] = useState(null);
   const [following, setFollowing] = useState([]);
+
+  const [touchStart, setTouchStart] = useState(null);
 
   const token = localStorage.getItem("token");
 
@@ -40,7 +44,6 @@ function Social() {
       setUser(response.data);
       setFollowing(response.data.following || []);
 
-      // Keep localStorage updated
       localStorage.setItem(
         "user",
         JSON.stringify(response.data)
@@ -68,10 +71,61 @@ function Social() {
       setPosts(response.data);
     } catch (error) {
       console.error("FETCH POSTS ERROR:", error);
+
       setError("Unable to load posts.");
     } finally {
       setLoading(false);
     }
+  };
+
+  // =========================
+  // Pull To Refresh
+  // =========================
+
+  const handleRefresh = async () => {
+    if (refreshing) return;
+
+    try {
+      setRefreshing(true);
+      setError("");
+
+      await fetchCurrentUser();
+      await fetchPosts();
+    } finally {
+      setRefreshing(false);
+    }
+  };
+
+  // =========================
+  // Touch Start
+  // =========================
+
+  const handleTouchStart = (event) => {
+    if (window.scrollY === 0) {
+      setTouchStart(event.touches[0].clientY);
+    }
+  };
+
+  // =========================
+  // Touch End
+  // =========================
+
+  const handleTouchEnd = async (event) => {
+    if (touchStart === null) return;
+
+    const touchEnd = event.changedTouches[0].clientY;
+
+    const distance = touchEnd - touchStart;
+
+    if (
+      window.scrollY === 0 &&
+      distance > 100 &&
+      !refreshing
+    ) {
+      await handleRefresh();
+    }
+
+    setTouchStart(null);
   };
 
   // =========================
@@ -114,7 +168,6 @@ function Social() {
         }
       );
 
-      // Update local state immediately
       setFollowing((prev) => [
         ...prev,
         userId,
@@ -149,7 +202,6 @@ function Social() {
         }
       );
 
-      // Remove from local state
       setFollowing((prev) =>
         prev.filter(
           (id) =>
@@ -187,6 +239,7 @@ function Social() {
     setVideoPreview("");
 
     setSelectedImage(file);
+
     setImagePreview(
       URL.createObjectURL(file)
     );
@@ -212,6 +265,7 @@ function Social() {
     setImagePreview("");
 
     setSelectedVideo(file);
+
     setVideoPreview(
       URL.createObjectURL(file)
     );
@@ -244,6 +298,7 @@ function Social() {
       setError(
         "Write something or select a photo/video."
       );
+
       return;
     }
 
@@ -254,7 +309,10 @@ function Social() {
       let imageUrl = "";
       let videoUrl = "";
 
-      // Upload image
+      // =========================
+      // Upload Image
+      // =========================
+
       if (selectedImage) {
         setUploading(true);
 
@@ -284,7 +342,10 @@ function Social() {
         setUploading(false);
       }
 
-      // Upload video
+      // =========================
+      // Upload Video
+      // =========================
+
       if (selectedVideo) {
         setUploading(true);
 
@@ -314,7 +375,10 @@ function Social() {
         setUploading(false);
       }
 
-      // Create post
+      // =========================
+      // Create Post
+      // =========================
+
       await API.post(
         "/posts",
         {
@@ -329,7 +393,10 @@ function Social() {
         }
       );
 
+      // =========================
       // Reset
+      // =========================
+
       setText("");
 
       setSelectedImage(null);
@@ -339,6 +406,7 @@ function Social() {
       setVideoPreview("");
 
       await fetchPosts();
+
     } catch (error) {
       console.error(
         "CREATE POST ERROR:",
@@ -351,6 +419,7 @@ function Social() {
         error.response?.data?.message ||
           "Unable to create post."
       );
+
     } finally {
       setPosting(false);
     }
@@ -373,6 +442,7 @@ function Social() {
       );
 
       await fetchPosts();
+
     } catch (error) {
       console.error("LIKE ERROR:", error);
 
@@ -412,6 +482,7 @@ function Social() {
       );
 
       await fetchPosts();
+
     } catch (error) {
       console.error(
         "COMMENT ERROR:",
@@ -423,9 +494,25 @@ function Social() {
       );
     }
   };
+    return (
+    <div
+      className="min-h-screen bg-gray-100 py-6 px-4"
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+    >
 
-  return (
-    <div className="min-h-screen bg-gray-100 py-6 px-4">
+      {/* ========================= */}
+      {/* Pull To Refresh Indicator */}
+      {/* ========================= */}
+
+      {refreshing && (
+        <div className="fixed top-20 left-0 right-0 z-40 flex justify-center">
+          <div className="bg-white shadow-lg rounded-full px-5 py-2 text-sm font-semibold text-blue-600">
+            🔄 Refreshing...
+          </div>
+        </div>
+      )}
+
       <div className="max-w-2xl mx-auto">
 
         {/* ========================= */}
@@ -462,17 +549,13 @@ function Social() {
 
             <div className="w-11 h-11 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold flex items-center justify-center flex-shrink-0">
               {user?.name
-                ? user.name
-                    .charAt(0)
-                    .toUpperCase()
+                ? user.name.charAt(0).toUpperCase()
                 : "👤"}
             </div>
 
             <textarea
               value={text}
-              onChange={(e) =>
-                setText(e.target.value)
-              }
+              onChange={(e) => setText(e.target.value)}
               placeholder="What's on your mind?"
               rows="3"
               maxLength={2000}
@@ -481,7 +564,9 @@ function Social() {
 
           </div>
 
+          {/* ========================= */}
           {/* Image Preview */}
+          {/* ========================= */}
 
           {imagePreview && (
             <div className="relative mt-4">
@@ -502,7 +587,9 @@ function Social() {
             </div>
           )}
 
+          {/* ========================= */}
           {/* Video Preview */}
+          {/* ========================= */}
 
           {videoPreview && (
             <div className="relative mt-4">
@@ -523,7 +610,9 @@ function Social() {
             </div>
           )}
 
-          {/* Controls */}
+          {/* ========================= */}
+          {/* Post Controls */}
+          {/* ========================= */}
 
           <div className="flex justify-between items-center mt-4">
 
@@ -569,10 +658,7 @@ function Social() {
 
               <button
                 onClick={handleCreatePost}
-                disabled={
-                  posting ||
-                  uploading
-                }
+                disabled={posting || uploading}
                 className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-5 py-2 rounded-xl font-semibold disabled:opacity-50"
               >
                 {uploading
@@ -585,6 +671,7 @@ function Social() {
             </div>
 
           </div>
+
         </div>
 
         {/* ========================= */}
@@ -601,24 +688,23 @@ function Social() {
         {/* Empty Feed */}
         {/* ========================= */}
 
-        {!loading &&
-          posts.length === 0 && (
-            <div className="bg-white rounded-2xl shadow-sm p-10 text-center">
+        {!loading && posts.length === 0 && (
+          <div className="bg-white rounded-2xl shadow-sm p-10 text-center">
 
-              <div className="text-5xl mb-4">
-                🌱
-              </div>
-
-              <h2 className="text-xl font-bold text-gray-800">
-                No posts yet
-              </h2>
-
-              <p className="text-gray-500 mt-2">
-                Be the first person to share something!
-              </p>
-
+            <div className="text-5xl mb-4">
+              🌱
             </div>
-          )}
+
+            <h2 className="text-xl font-bold text-gray-800">
+              No posts yet
+            </h2>
+
+            <p className="text-gray-500 mt-2">
+              Be the first person to share something!
+            </p>
+
+          </div>
+        )}
 
         {/* ========================= */}
         {/* Posts */}
@@ -627,19 +713,17 @@ function Social() {
         {!loading &&
           posts.map((post) => {
 
-            const authorId =
-              post.author?._id;
+            const authorId = post.author?._id;
 
             const isOwnPost =
               user?._id?.toString() ===
               authorId?.toString();
 
-            const liked =
-              post.likes?.some(
-                (id) =>
-                  id?.toString() ===
-                  user?._id?.toString()
-              );
+            const liked = post.likes?.some(
+              (id) =>
+                id?.toString() ===
+                user?._id?.toString()
+            );
 
             return (
               <div
@@ -647,7 +731,9 @@ function Social() {
                 className="bg-white rounded-2xl shadow-sm p-5 mb-5"
               >
 
+                {/* ========================= */}
                 {/* Author */}
+                {/* ========================= */}
 
                 <div className="flex items-center justify-between">
 
@@ -678,40 +764,37 @@ function Social() {
 
                   </div>
 
+                  {/* ========================= */}
                   {/* Follow Button */}
+                  {/* ========================= */}
 
-                  {!isOwnPost &&
-                    authorId && (
-                      isFollowing(
-                        authorId
-                      ) ? (
-                        <button
-                          onClick={() =>
-                            handleUnfollow(
-                              authorId
-                            )
-                          }
-                          className="px-4 py-2 rounded-xl border border-gray-300 text-gray-700 font-semibold hover:bg-gray-100 transition"
-                        >
-                          ✓ Following
-                        </button>
-                      ) : (
-                        <button
-                          onClick={() =>
-                            handleFollow(
-                              authorId
-                            )
-                          }
-                          className="px-4 py-2 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700 transition"
-                        >
-                          Follow
-                        </button>
-                      )
-                    )}
+                  {!isOwnPost && authorId && (
+                    isFollowing(authorId) ? (
+                      <button
+                        onClick={() =>
+                          handleUnfollow(authorId)
+                        }
+                        className="px-4 py-2 rounded-xl border border-gray-300 text-gray-700 font-semibold hover:bg-gray-100 transition"
+                      >
+                        ✓ Following
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() =>
+                          handleFollow(authorId)
+                        }
+                        className="px-4 py-2 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700 transition"
+                      >
+                        Follow
+                      </button>
+                    )
+                  )}
 
                 </div>
 
+                {/* ========================= */}
                 {/* Text */}
+                {/* ========================= */}
 
                 {post.text && (
                   <p className="mt-4 text-gray-700 whitespace-pre-wrap">
@@ -719,7 +802,9 @@ function Social() {
                   </p>
                 )}
 
+                {/* ========================= */}
                 {/* Image */}
+                {/* ========================= */}
 
                 {post.image && (
                   <img
@@ -729,7 +814,9 @@ function Social() {
                   />
                 )}
 
+                {/* ========================= */}
                 {/* Video */}
+                {/* ========================= */}
 
                 {post.video && (
                   <video
@@ -740,15 +827,15 @@ function Social() {
                   />
                 )}
 
+                {/* ========================= */}
                 {/* Actions */}
+                {/* ========================= */}
 
                 <div className="flex items-center gap-6 mt-5 pt-4 border-t border-gray-100">
 
                   <button
                     onClick={() =>
-                      handleLike(
-                        post._id
-                      )
+                      handleLike(post._id)
                     }
                     className={`font-medium transition ${
                       liked
@@ -756,43 +843,37 @@ function Social() {
                         : "text-gray-600 hover:text-red-500"
                     }`}
                   >
-                    {liked
-                      ? "❤️"
-                      : "🤍"}{" "}
-                    {post.likes?.length ||
-                      0}
+                    {liked ? "❤️" : "🤍"}{" "}
+                    {post.likes?.length || 0}
                   </button>
 
                   <button
                     onClick={() =>
-                      handleComment(
-                        post._id
-                      )
+                      handleComment(post._id)
                     }
                     className="text-gray-600 hover:text-blue-600 font-medium"
                   >
                     💬{" "}
-                    {post.comments?.length ||
-                      0}
+                    {post.comments?.length || 0}
                   </button>
 
-                  <button className="text-gray-600 hover:text-green-600 font-medium">
+                  <button
+                    className="text-gray-600 hover:text-green-600 font-medium"
+                  >
                     🔗 Share
                   </button>
 
                 </div>
 
+                {/* ========================= */}
                 {/* Comments */}
+                {/* ========================= */}
 
-                {post.comments?.length >
-                  0 && (
+                {post.comments?.length > 0 && (
                   <div className="mt-4 space-y-2">
 
                     {post.comments.map(
-                      (
-                        comment,
-                        index
-                      ) => (
+                      (comment, index) => (
                         <div
                           key={
                             comment._id ||
@@ -820,6 +901,22 @@ function Social() {
               </div>
             );
           })}
+
+        {/* ========================= */}
+        {/* Bottom Refresh Button */}
+        {/* ========================= */}
+
+        {!loading && (
+          <button
+            onClick={handleRefresh}
+            disabled={refreshing}
+            className="w-full mb-8 py-3 rounded-xl bg-white border border-gray-200 text-blue-600 font-semibold shadow-sm hover:bg-blue-50 transition disabled:opacity-50"
+          >
+            {refreshing
+              ? "🔄 Refreshing..."
+              : "↻ Refresh Feed"}
+          </button>
+        )}
 
       </div>
     </div>

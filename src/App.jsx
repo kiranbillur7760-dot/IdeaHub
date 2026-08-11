@@ -19,6 +19,7 @@ import ClientDashboard from "./pages/ClientDashboard";
 import ProjectDiscovery from "./pages/ProjectDiscovery";
 import ClientRequests from "./pages/ClientRequests";
 import AIChat from "./pages/AIChat";
+import Reels from "./pages/Reels";
 
 import ProtectedRoute from "./components/ProtectedRoute";
 import ProtectedLayout from "./components/ProtectedLayout";
@@ -74,6 +75,14 @@ function App() {
           </ProtectedRoute>
         }
       />
+      <Route
+  path="/reels"
+  element={
+    <ProtectedRoute>
+      <Reels />
+    </ProtectedRoute>
+  }
+/>
 
       {/* ========================= */}
       {/* Client Requests */}

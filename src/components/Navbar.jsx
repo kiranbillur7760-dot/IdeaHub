@@ -34,10 +34,16 @@ function Navbar() {
     <nav className="w-full bg-white border-b border-gray-100 shadow-sm relative z-50">
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
+        {/* ========================= */}
         {/* Header */}
+        {/* ========================= */}
+
         <div className="min-h-20 flex items-center justify-between gap-4">
 
+          {/* ========================= */}
           {/* Logo */}
+          {/* ========================= */}
+
           <Link
             to="/home"
             onClick={closeMenu}
@@ -58,7 +64,10 @@ function Navbar() {
             </div>
           </Link>
 
+          {/* ========================= */}
           {/* Desktop Navigation */}
+          {/* ========================= */}
+
           <div className="hidden lg:flex items-center gap-2">
 
             {/* Home */}
@@ -86,6 +95,15 @@ function Navbar() {
               className="w-11 h-11 rounded-xl flex items-center justify-center text-xl hover:bg-pink-100 transition"
             >
               📱
+            </Link>
+
+            {/* Reels */}
+            <Link
+              to="/reels"
+              title="Reels"
+              className="w-11 h-11 rounded-xl flex items-center justify-center text-xl hover:bg-purple-100 transition"
+            >
+              🎬
             </Link>
 
             {/* Trending */}
@@ -162,7 +180,10 @@ function Navbar() {
             )}
           </div>
 
+          {/* ========================= */}
           {/* Mobile Menu Button */}
+          {/* ========================= */}
+
           <button
             type="button"
             onClick={() => setMenuOpen(!menuOpen)}
@@ -173,7 +194,10 @@ function Navbar() {
           </button>
         </div>
 
+        {/* ========================= */}
         {/* Mobile Navigation */}
+        {/* ========================= */}
+
         {menuOpen && (
           <div className="lg:hidden border-t border-gray-100 py-4">
             <div className="flex flex-col gap-2">
@@ -206,6 +230,16 @@ function Navbar() {
               >
                 📱
                 <span>Social</span>
+              </Link>
+
+              {/* Reels */}
+              <Link
+                to="/reels"
+                onClick={closeMenu}
+                className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-purple-50 text-gray-700 font-medium"
+              >
+                🎬
+                <span>Reels</span>
               </Link>
 
               {/* Trending */}
@@ -243,6 +277,7 @@ function Navbar() {
                   {/* Notifications */}
                   <div className="flex items-center gap-3 px-4 py-3 rounded-xl">
                     <NotificationBell />
+
                     <span className="text-gray-700 font-medium">
                       Notifications
                     </span>
