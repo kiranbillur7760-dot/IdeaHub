@@ -5,6 +5,7 @@ import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 
+import postRoutes from "./routes/postRoutes.js";
 import personalMessageRoutes from "./routes/personalMessageRoutes.js";
 import commentRoutes from "./routes/commentRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
@@ -117,6 +118,8 @@ app.use("/api/client-requests", clientRequestRoutes);
 app.use("/api/ai", aiRoutes);
 
 app.use("/api/chats", chatRoutes);
+
+app.use("/api/posts", postRoutes);
 
 // ==========================
 // Test Route
