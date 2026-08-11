@@ -4,9 +4,8 @@ import axios from "axios";
 import { io } from "socket.io-client";
 import { useParams, useNavigate } from "react-router-dom";
 
-const API_URL =
-  import.meta.env.VITE_API_URL ||
-  "http://localhost:5000";
+// Render backend URL
+const API_URL = "https://ideahub-4-ybrb.onrender.com";
 
 const PersonalChat = () => {
   const { userId } = useParams();
@@ -19,8 +18,7 @@ const PersonalChat = () => {
   const [otherUser, setOtherUser] = useState(null);
 
   // Selected media
-  const [selectedMedia, setSelectedMedia] =
-    useState(null);
+  const [selectedMedia, setSelectedMedia] = useState(null);
 
   const socketRef = useRef(null);
   const messagesEndRef = useRef(null);
@@ -41,19 +39,14 @@ const PersonalChat = () => {
 
       return null;
     } catch (error) {
-      console.error(
-        "GET CURRENT USER ERROR:",
-        error
-      );
-
+      console.error("GET CURRENT USER ERROR:", error);
       return null;
     }
   };
 
   const currentUser = getCurrentUser();
 
-  const currentUserId =
-    currentUser?._id || currentUser?.id;
+  const currentUserId = currentUser?._id || currentUser?.id;
 
   // ========================================
   // Scroll to bottom
@@ -87,30 +80,22 @@ const PersonalChat = () => {
           }
         );
 
-        setMessages(
-          response.data.messages || []
-        );
+        setMessages(response.data.messages || []);
 
-        const loadedMessages =
-          response.data.messages || [];
+        const loadedMessages = response.data.messages || [];
 
         if (loadedMessages.length > 0) {
-          const firstMessage =
-            loadedMessages[0];
+          const firstMessage = loadedMessages[0];
 
           const user =
-            firstMessage.sender?._id ===
-            currentUserId
+            firstMessage.sender?._id === currentUserId
               ? firstMessage.receiver
               : firstMessage.sender;
 
           setOtherUser(user);
         }
       } catch (error) {
-        console.error(
-          "LOAD PERSONAL MESSAGES ERROR:",
-          error
-        );
+        console.error("LOAD PERSONAL MESSAGES ERROR:", error);
       } finally {
         setLoading(false);
       }
@@ -128,24 +113,41 @@ const PersonalChat = () => {
       return;
     }
 
-    const socket = io(API_URL);
+    console.log("Connecting Socket.IO to:", API_URL);
+
+    const socket = io(API_URL, {
+      transports: ["websocket", "polling"],
+      reconnection: true,
+      reconnectionAttempts: 5,
+    });
 
     socketRef.current = socket;
 
-    socket.emit("joinPersonalChat", {
-      userId: currentUserId,
-      otherUserId: userId,
+    socket.on("connect", () => {
+      console.log("SOCKET CONNECTED:", socket.id);
+
+      socket.emit("joinPersonalChat", {
+        userId: currentUserId,
+        otherUserId: userId,
+      });
     });
 
-    socket.on(
-      "newPersonalMessage",
-      (newMessage) => {
-        setMessages((previousMessages) => [
-          ...previousMessages,
-          newMessage,
-        ]);
-      }
-    );
+    socket.on("connect_error", (error) => {
+      console.error("SOCKET CONNECTION ERROR:", error);
+    });
+
+    socket.on("disconnect", (reason) => {
+      console.log("SOCKET DISCONNECTED:", reason);
+    });
+
+    socket.on("newPersonalMessage", (newMessage) => {
+      console.log("NEW PERSONAL MESSAGE:", newMessage);
+
+      setMessages((previousMessages) => [
+        ...previousMessages,
+        newMessage,
+      ]);
+    });
 
     return () => {
       socket.disconnect();
@@ -172,28 +174,18 @@ const PersonalChat = () => {
       return;
     }
 
-    // Only image or video
-    const isImage =
-      file.type.startsWith("image/");
-
-    const isVideo =
-      file.type.startsWith("video/");
+    const isImage = file.type.startsWith("image/");
+    const isVideo = file.type.startsWith("video/");
 
     if (!isImage && !isVideo) {
-      alert(
-        "Please select an image or video."
-      );
-
+      alert("Please select an image or video.");
       event.target.value = "";
       return;
     }
 
     // 50 MB limit
     if (file.size > 50 * 1024 * 1024) {
-      alert(
-        "File must be smaller than 50 MB."
-      );
-
+      alert("File must be smaller than 50 MB.");
       event.target.value = "";
       return;
     }
@@ -201,7 +193,7 @@ const PersonalChat = () => {
     setSelectedMedia(file);
 
     console.log(
-      "📎 MEDIA SELECTED:",
+      "MEDIA SELECTED:",
       file.name,
       file.type,
       file.size
@@ -215,10 +207,7 @@ const PersonalChat = () => {
   const removeSelectedMedia = () => {
     setSelectedMedia(null);
 
-    const input =
-      document.getElementById(
-        "media-input"
-      );
+    const input = document.getElementById("media-input");
 
     if (input) {
       input.value = "";
@@ -236,21 +225,15 @@ const PersonalChat = () => {
 
     const formData = new FormData();
 
-    // Backend currently expects "image"
-    formData.append(
-      "image",
-      selectedMedia
-    );
+    formData.append("image", selectedMedia);
 
     const response = await axios.post(
       `${API_URL}/api/upload`,
       formData,
       {
         headers: {
-          "Content-Type":
-            "multipart/form-data",
-          Authorization:
-            `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${token}`,
         },
       }
     );
@@ -262,9 +245,7 @@ const PersonalChat = () => {
 
       mediaType:
         response.data.mediaType ||
-        (selectedMedia.type.startsWith(
-          "video/"
-        )
+        (selectedMedia.type.startsWith("video/")
           ? "video"
           : "image"),
     };
@@ -283,18 +264,19 @@ const PersonalChat = () => {
     }
 
     if (!socketRef.current) {
-      console.error(
-        "Socket is not connected"
-      );
+      console.error("Socket is not connected");
+      alert("Chat connection is not ready. Please wait a moment and try again.");
+      return;
+    }
 
+    if (!socketRef.current.connected) {
+      console.error("Socket is disconnected");
+      alert("Chat connection lost. Please try again.");
       return;
     }
 
     if (!currentUserId || !userId) {
-      console.error(
-        "Missing user IDs"
-      );
-
+      console.error("Missing user IDs");
       return;
     }
 
@@ -306,25 +288,29 @@ const PersonalChat = () => {
 
       // Upload selected media
       if (selectedMedia) {
-        console.log(
-          "📤 Uploading media..."
-        );
+        console.log("Uploading media...");
 
-        const uploaded =
-          await uploadMedia();
+        const uploaded = await uploadMedia();
 
-        mediaUrl =
-          uploaded.mediaUrl;
-
-        mediaType =
-          uploaded.mediaType;
+        if (uploaded) {
+          mediaUrl = uploaded.mediaUrl;
+          mediaType = uploaded.mediaType;
+        }
 
         console.log(
-          "✅ MEDIA UPLOADED:",
+          "MEDIA UPLOADED:",
           mediaUrl,
           mediaType
         );
       }
+
+      console.log("SENDING PERSONAL MESSAGE:", {
+        senderId: currentUserId,
+        receiverId: userId,
+        text: cleanText,
+        mediaUrl,
+        mediaType,
+      });
 
       // Send through Socket.IO
       socketRef.current.emit(
@@ -335,6 +321,9 @@ const PersonalChat = () => {
           text: cleanText,
           mediaUrl,
           mediaType,
+        },
+        (response) => {
+          console.log("SEND MESSAGE RESPONSE:", response);
         }
       );
 
@@ -344,15 +333,11 @@ const PersonalChat = () => {
       // Clear selected media
       setSelectedMedia(null);
 
-      const input =
-        document.getElementById(
-          "media-input"
-        );
+      const input = document.getElementById("media-input");
 
       if (input) {
         input.value = "";
       }
-
     } catch (error) {
       console.error(
         "SEND MEDIA MESSAGE ERROR:",
@@ -388,8 +373,7 @@ const PersonalChat = () => {
 
   const isMyMessage = (message) => {
     return (
-      message.sender?._id ===
-        currentUserId ||
+      message.sender?._id === currentUserId ||
       message.sender === currentUserId
     );
   };
@@ -447,8 +431,7 @@ const PersonalChat = () => {
         ) : (
           messages.map((message) => {
 
-            const mine =
-              isMyMessage(message);
+            const mine = isMyMessage(message);
 
             return (
               <div
@@ -470,12 +453,9 @@ const PersonalChat = () => {
 
                   {/* IMAGE */}
                   {message.mediaUrl &&
-                    message.mediaType ===
-                      "image" && (
+                    message.mediaType === "image" && (
                       <img
-                        src={
-                          message.mediaUrl
-                        }
+                        src={message.mediaUrl}
                         alt="Shared"
                         className="max-w-full max-h-80 rounded-xl mb-2 object-cover"
                       />
@@ -483,12 +463,9 @@ const PersonalChat = () => {
 
                   {/* VIDEO */}
                   {message.mediaUrl &&
-                    message.mediaType ===
-                      "video" && (
+                    message.mediaType === "video" && (
                       <video
-                        src={
-                          message.mediaUrl
-                        }
+                        src={message.mediaUrl}
                         controls
                         playsInline
                         className="max-w-full max-h-80 rounded-xl mb-2"
@@ -513,13 +490,10 @@ const PersonalChat = () => {
                     {message.createdAt
                       ? new Date(
                           message.createdAt
-                        ).toLocaleTimeString(
-                          [],
-                          {
-                            hour: "2-digit",
-                            minute: "2-digit",
-                          }
-                        )
+                        ).toLocaleTimeString([], {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })
                       : ""}
                   </p>
 
@@ -540,30 +514,22 @@ const PersonalChat = () => {
 
           <div className="relative inline-block">
 
-            {selectedMedia.type.startsWith(
-              "image/"
-            ) ? (
+            {selectedMedia.type.startsWith("image/") ? (
               <img
-                src={URL.createObjectURL(
-                  selectedMedia
-                )}
+                src={URL.createObjectURL(selectedMedia)}
                 alt="Selected"
                 className="w-28 h-28 object-cover rounded-xl border"
               />
             ) : (
               <video
-                src={URL.createObjectURL(
-                  selectedMedia
-                )}
+                src={URL.createObjectURL(selectedMedia)}
                 controls
                 className="w-40 h-28 object-cover rounded-xl border"
               />
             )}
 
             <button
-              onClick={
-                removeSelectedMedia
-              }
+              onClick={removeSelectedMedia}
               className="absolute -top-2 -right-2 bg-red-500 text-white w-6 h-6 rounded-full text-sm"
             >
               ×
@@ -583,9 +549,7 @@ const PersonalChat = () => {
           accept="image/*,video/*"
           id="media-input"
           className="hidden"
-          onChange={
-            handleMediaSelect
-          }
+          onChange={handleMediaSelect}
         />
 
         {/* Media button */}
@@ -615,8 +579,7 @@ const PersonalChat = () => {
           onClick={sendMessage}
           disabled={
             sending ||
-            (!text.trim() &&
-              !selectedMedia)
+            (!text.trim() && !selectedMedia)
           }
           className="bg-black text-white px-5 py-2 rounded-xl disabled:opacity-50"
         >

@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import NotificationBell from "./NotificationBell";
@@ -62,6 +61,7 @@ function Navbar() {
           {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center gap-2">
 
+            {/* Home */}
             <Link
               to="/home"
               title="Home"
@@ -70,6 +70,7 @@ function Navbar() {
               🏠
             </Link>
 
+            {/* Explore */}
             <Link
               to="/explore"
               title="Explore"
@@ -78,6 +79,16 @@ function Navbar() {
               🔍
             </Link>
 
+            {/* Social */}
+            <Link
+              to="/social"
+              title="Social"
+              className="w-11 h-11 rounded-xl flex items-center justify-center text-xl hover:bg-pink-100 transition"
+            >
+              📱
+            </Link>
+
+            {/* Trending */}
             <Link
               to="/trending"
               title="Trending"
@@ -88,6 +99,7 @@ function Navbar() {
 
             {token && (
               <>
+                {/* Saved Ideas */}
                 <Link
                   to="/saved"
                   title="Saved Ideas"
@@ -96,6 +108,7 @@ function Navbar() {
                   🔖
                 </Link>
 
+                {/* Create Idea */}
                 <Link
                   to="/create-idea"
                   className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2.5 rounded-xl font-semibold shadow-lg whitespace-nowrap"
@@ -103,8 +116,10 @@ function Navbar() {
                   + Create
                 </Link>
 
+                {/* Notifications */}
                 <NotificationBell />
 
+                {/* Profile */}
                 <Link
                   to="/profile"
                   title="Profile"
@@ -115,6 +130,7 @@ function Navbar() {
                     : "👤"}
                 </Link>
 
+                {/* Logout */}
                 <button
                   onClick={handleLogout}
                   title="Logout"
@@ -127,6 +143,7 @@ function Navbar() {
 
             {!token && (
               <>
+                {/* Login */}
                 <Link
                   to="/"
                   className="px-4 py-2.5 rounded-xl bg-blue-600 text-white hover:bg-blue-700 transition whitespace-nowrap"
@@ -134,6 +151,7 @@ function Navbar() {
                   Login
                 </Link>
 
+                {/* Register */}
                 <Link
                   to="/register"
                   className="px-4 py-2.5 rounded-xl border border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white transition whitespace-nowrap"
@@ -160,6 +178,7 @@ function Navbar() {
           <div className="lg:hidden border-t border-gray-100 py-4">
             <div className="flex flex-col gap-2">
 
+              {/* Home */}
               <Link
                 to="/home"
                 onClick={closeMenu}
@@ -169,6 +188,7 @@ function Navbar() {
                 <span>Home</span>
               </Link>
 
+              {/* Explore */}
               <Link
                 to="/explore"
                 onClick={closeMenu}
@@ -178,6 +198,17 @@ function Navbar() {
                 <span>Explore</span>
               </Link>
 
+              {/* Social */}
+              <Link
+                to="/social"
+                onClick={closeMenu}
+                className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-pink-50 text-gray-700 font-medium"
+              >
+                📱
+                <span>Social</span>
+              </Link>
+
+              {/* Trending */}
               <Link
                 to="/trending"
                 onClick={closeMenu}
@@ -189,6 +220,7 @@ function Navbar() {
 
               {token && (
                 <>
+                  {/* Saved Ideas */}
                   <Link
                     to="/saved"
                     onClick={closeMenu}
@@ -198,6 +230,7 @@ function Navbar() {
                     <span>Saved Ideas</span>
                   </Link>
 
+                  {/* Create Idea */}
                   <Link
                     to="/create-idea"
                     onClick={closeMenu}
@@ -207,6 +240,7 @@ function Navbar() {
                     <span>Create Idea</span>
                   </Link>
 
+                  {/* Notifications */}
                   <div className="flex items-center gap-3 px-4 py-3 rounded-xl">
                     <NotificationBell />
                     <span className="text-gray-700 font-medium">
@@ -214,6 +248,7 @@ function Navbar() {
                     </span>
                   </div>
 
+                  {/* Profile */}
                   <Link
                     to="/profile"
                     onClick={closeMenu}
@@ -228,6 +263,7 @@ function Navbar() {
                     <span>Profile</span>
                   </Link>
 
+                  {/* Logout */}
                   <button
                     onClick={handleLogout}
                     className="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-red-500 text-white font-medium hover:bg-red-600"
@@ -240,6 +276,7 @@ function Navbar() {
 
               {!token && (
                 <>
+                  {/* Login */}
                   <Link
                     to="/"
                     onClick={closeMenu}
@@ -248,6 +285,7 @@ function Navbar() {
                     Login
                   </Link>
 
+                  {/* Register */}
                   <Link
                     to="/register"
                     onClick={closeMenu}
@@ -261,7 +299,6 @@ function Navbar() {
             </div>
           </div>
         )}
-
       </div>
     </nav>
   );

@@ -4,6 +4,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Home from "./pages/Home";
+import Social from "./pages/Social";
 import Explore from "./pages/Explore";
 import CreateIdea from "./pages/CreateIdea";
 import IdeaDetails from "./pages/IdeaDetails";
@@ -145,6 +146,20 @@ function App() {
           </ProtectedRoute>
         }
       />
+      {/* ========================= */}
+{/* Social */}
+{/* ========================= */}
+
+<Route
+  path="/social"
+  element={
+    <ProtectedRoute>
+      <ProtectedLayout>
+        <Social />
+      </ProtectedLayout>
+    </ProtectedRoute>
+  }
+/>
 
       {/* ========================= */}
       {/* Create Idea */}
