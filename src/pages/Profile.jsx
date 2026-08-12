@@ -1,19 +1,27 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import API from "../services/api";
-import { useNavigate } from "react-router-dom";
+
 function Profile() {
   const navigate = useNavigate();
+
   const [user, setUser] = useState(null);
   const [ideas, setIdeas] = useState([]);
 
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [uploading, setUploading] = useState(false);
+
   useEffect(() => {
     const loggedUser = JSON.parse(localStorage.getItem("user"));
+
     setUser(loggedUser);
 
     fetchMyIdeas();
   }, []);
 
+  // ==========================
+  // Fetch My Ideas
+  // ==========================
   const fetchMyIdeas = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -30,6 +38,91 @@ function Profile() {
     }
   };
 
+  // ==========================
+  // Select Profile Picture
+  // ==========================
+  const handleImageSelect = (event) => {
+    const file = event.target.files[0];
+
+    if (!file) return;
+
+    // Check file type
+    if (!file.type.startsWith("image/")) {
+      alert("Please select an image file.");
+      return;
+    }
+
+    // Check file size - 5MB
+    if (file.size > 5 * 1024 * 1024) {
+      alert("Image must be smaller than 5MB.");
+      return;
+    }
+
+    setSelectedImage(file);
+  };
+
+  // ==========================
+  // Upload Profile Picture
+  // ==========================
+  const uploadProfilePicture = async () => {
+    if (!selectedImage) {
+      alert("Please select an image first.");
+      return;
+    }
+
+    try {
+      setUploading(true);
+
+      const token = localStorage.getItem("token");
+
+      const formData = new FormData();
+
+      formData.append("profileImage", selectedImage);
+
+      const res = await API.put(
+        "/users/profile",
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      const updatedUser = res.data.user;
+
+      // Update React state
+      setUser(updatedUser);
+
+      // Update localStorage
+      localStorage.setItem(
+        "user",
+        JSON.stringify(updatedUser)
+      );
+
+      // Clear selected image
+      setSelectedImage(null);
+
+      alert("Profile picture updated successfully!");
+    } catch (err) {
+      console.error(
+        "Profile picture upload error:",
+        err.response?.data || err
+      );
+
+      alert(
+        err.response?.data?.message ||
+          "Failed to upload profile picture."
+      );
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  // ==========================
+  // Delete Idea
+  // ==========================
   const deleteIdea = async (id) => {
     const confirmDelete = window.confirm(
       "Are you sure you want to delete this idea?"
@@ -47,73 +140,137 @@ function Profile() {
       });
 
       alert("Idea deleted successfully!");
-      fetchMyIdeas();
 
+      fetchMyIdeas();
     } catch (err) {
       console.error(err);
     }
   };
+
+  // ==========================
+  // Start Project
+  // ==========================
   const startProject = async (ideaId) => {
-  const confirmStart = window.confirm(
-    "Do you want to start a project from this idea?"
-  );
+    const confirmStart = window.confirm(
+      "Do you want to start a project from this idea?"
+    );
 
-  if (!confirmStart) return;
+    if (!confirmStart) return;
 
-  try {
-    const token = localStorage.getItem("token");
+    try {
+      const token = localStorage.getItem("token");
 
-    const res = await API.post(
-      "/projects",
-      {
-        ideaId,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
+      const res = await API.post(
+        "/projects",
+        {
+          ideaId,
         },
-      }
-    );
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
-    alert("Project created successfully!");
+      alert("Project created successfully!");
 
-    // Open the project workspace
-    navigate(`/projects/${res.data.project._id}`);
+      navigate(`/projects/${res.data.project._id}`);
+    } catch (err) {
+      console.error(err.response?.data || err);
 
-  } catch (err) {
-    console.error(err.response?.data || err);
+      alert(
+        err.response?.data?.message ||
+          "Failed to create project."
+      );
+    }
+  };
 
-    alert(
-      err.response?.data?.message ||
-        "Failed to create project."
-    );
-  }
-};
-
+  // ==========================
+  // Statistics
+  // ==========================
   const totalLikes = ideas.reduce(
-    (sum, idea) => sum + (idea.likes ? idea.likes.length : 0),
+    (sum, idea) =>
+      sum + (idea.likes ? idea.likes.length : 0),
     0
   );
 
   const totalComments = ideas.reduce(
-    (sum, idea) => sum + (idea.comments || 0),
+    (sum, idea) =>
+      sum + (idea.comments || 0),
     0
   );
 
   return (
     <div className="max-w-6xl mx-auto p-6">
 
-      {/* Profile Card */}
+      {/* ==========================
+          Profile Card
+      ========================== */}
       <div className="bg-white rounded-2xl shadow-lg p-8">
 
         <div className="flex flex-col md:flex-row items-center gap-6">
 
-          {/* Avatar */}
-          <div className="w-28 h-28 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white flex items-center justify-center text-5xl font-bold shadow-lg">
-            {user?.name?.charAt(0).toUpperCase()}
+          {/* ==========================
+              Profile Picture
+          ========================== */}
+          <div className="flex flex-col items-center">
+
+            <div className="w-28 h-28 rounded-full overflow-hidden bg-gradient-to-r from-blue-600 to-indigo-600 text-white flex items-center justify-center text-5xl font-bold shadow-lg">
+
+              {user?.profileImage ? (
+                <img
+                  src={user.profileImage}
+                  alt={user.name}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                user?.name?.charAt(0).toUpperCase()
+              )}
+
+            </div>
+
+            {/* Select Image */}
+            <label
+              htmlFor="profileImage"
+              className="mt-4 cursor-pointer bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg transition"
+            >
+              📷 Change Picture
+            </label>
+
+            <input
+              id="profileImage"
+              type="file"
+              accept="image/*"
+              onChange={handleImageSelect}
+              className="hidden"
+            />
+
+            {/* Selected Image */}
+            {selectedImage && (
+              <div className="mt-3 text-center">
+
+                <p className="text-sm text-gray-500 mb-2">
+                  {selectedImage.name}
+                </p>
+
+                <button
+                  onClick={uploadProfilePicture}
+                  disabled={uploading}
+                  className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white px-5 py-2 rounded-lg transition"
+                >
+                  {uploading
+                    ? "Uploading..."
+                    : "⬆️ Upload Picture"}
+                </button>
+
+              </div>
+            )}
+
           </div>
 
-          {/* User Details */}
+          {/* ==========================
+              User Details
+          ========================== */}
           <div className="flex-1">
 
             <h1 className="text-4xl font-bold text-gray-800">
@@ -129,11 +286,11 @@ function Profile() {
             </p>
 
             <button
-  onClick={() => navigate("/edit-profile")}
-  className="mt-5 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition"
->
-  Edit Profile
-</button>
+              onClick={() => navigate("/edit-profile")}
+              className="mt-5 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition"
+            >
+              Edit Profile
+            </button>
 
           </div>
 
@@ -141,7 +298,9 @@ function Profile() {
 
         <hr className="my-8" />
 
-        {/* Statistics */}
+        {/* ==========================
+            Statistics
+        ========================== */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
 
           <div className="bg-gradient-to-r from-blue-500 to-blue-700 text-white rounded-xl p-6 text-center shadow">
@@ -150,7 +309,9 @@ function Profile() {
               {ideas.length}
             </h2>
 
-            <p className="mt-2">💡 Total Ideas</p>
+            <p className="mt-2">
+              💡 Total Ideas
+            </p>
 
           </div>
 
@@ -160,7 +321,9 @@ function Profile() {
               {totalLikes}
             </h2>
 
-            <p className="mt-2">❤️ Total Likes</p>
+            <p className="mt-2">
+              ❤️ Total Likes
+            </p>
 
           </div>
 
@@ -170,7 +333,9 @@ function Profile() {
               {totalComments}
             </h2>
 
-            <p className="mt-2">💬 Total Comments</p>
+            <p className="mt-2">
+              💬 Total Comments
+            </p>
 
           </div>
 
@@ -178,7 +343,9 @@ function Profile() {
 
       </div>
 
-      {/* My Ideas */}
+      {/* ==========================
+          My Ideas
+      ========================== */}
       <div className="mt-12">
 
         <h2 className="text-3xl font-bold mb-6">
@@ -210,7 +377,7 @@ function Profile() {
                 className="bg-white rounded-xl shadow-lg overflow-hidden"
               >
 
-                {/* Image */}
+                {/* Idea Image */}
                 {idea.image && (
                   <img
                     src={idea.image}
@@ -247,28 +414,29 @@ function Profile() {
 
                   <div className="flex gap-4 mt-6 flex-wrap">
 
-  <Link
-    to={`/edit-idea/${idea._id}`}
-    className="bg-yellow-500 hover:bg-yellow-600 text-white px-5 py-2 rounded-lg transition"
-  >
-    ✏️ Edit
-  </Link>
+                    <Link
+                      to={`/edit-idea/${idea._id}`}
+                      className="bg-yellow-500 hover:bg-yellow-600 text-white px-5 py-2 rounded-lg transition"
+                    >
+                      ✏️ Edit
+                    </Link>
 
-  <button
-    onClick={() => deleteIdea(idea._id)}
-    className="bg-red-600 hover:bg-red-700 text-white px-5 py-2 rounded-lg transition"
-  >
-    🗑 Delete
-  </button>
+                    <button
+                      onClick={() => deleteIdea(idea._id)}
+                      className="bg-red-600 hover:bg-red-700 text-white px-5 py-2 rounded-lg transition"
+                    >
+                      🗑 Delete
+                    </button>
 
-  <button
-    onClick={() => startProject(idea._id)}
-    className="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-lg transition"
-  >
-    🚀 Start Project
-  </button>
+                    <button
+                      onClick={() => startProject(idea._id)}
+                      className="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-lg transition"
+                    >
+                      🚀 Start Project
+                    </button>
 
-</div>
+                  </div>
+
                 </div>
 
               </div>

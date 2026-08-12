@@ -1,6 +1,7 @@
 import express from "express";
 
 import authMiddleware from "../middleware/authMiddleware.js";
+import upload from "../middleware/uploadMiddleware.js";
 
 import {
   getProfile,
@@ -14,33 +15,66 @@ import {
 
 const router = express.Router();
 
-// Get logged-in user's profile
+// ==========================
+// Get Logged-in User Profile
+// ==========================
 router.get(
   "/profile",
   authMiddleware,
   getProfile
 );
 
+// ==========================
+// Follow a User
+// ==========================
+router.put(
+  "/:id/follow",
+  authMiddleware,
+  followUser
+);
 
-// Follow a user
-router.put("/:id/follow", authMiddleware, followUser);
+// ==========================
+// Unfollow a User
+// ==========================
+router.put(
+  "/:id/unfollow",
+  authMiddleware,
+  unfollowUser
+);
 
-// Unfollow a user
-router.put("/:id/unfollow", authMiddleware, unfollowUser);
+// ==========================
+// Get Followers
+// ==========================
+router.get(
+  "/:id/followers",
+  getFollowers
+);
 
-// Get followers
-router.get("/:id/followers", getFollowers);
+// ==========================
+// Get Following
+// ==========================
+router.get(
+  "/:id/following",
+  getFollowing
+);
 
-// Get following
-router.get("/:id/following", getFollowing);
-// Update logged-in user's profile
+// ==========================
+// Update Profile
+// Supports:
+// - name
+// - bio
+// - profile picture
+// ==========================
 router.put(
   "/profile",
   authMiddleware,
+  upload.single("profileImage"),
   updateProfile
 );
 
-// Get all users
+// ==========================
+// Get All Users
+// ==========================
 router.get(
   "/",
   authMiddleware,

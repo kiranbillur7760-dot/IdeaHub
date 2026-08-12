@@ -1,4 +1,5 @@
 import User from "../models/user.js";
+import cloudinary from "../config/cloudinary.js";
 
 // ==========================
 // Get Logged-in User
@@ -28,29 +29,73 @@ export const updateProfile = async (req, res) => {
       });
     }
 
-    user.name = req.body.name || user.name;
-    user.bio = req.body.bio || user.bio;
+    // ==========================
+    // Update Name
+    // ==========================
+    if (req.body.name) {
+      user.name = req.body.name;
+    }
 
+    // ==========================
+    // Update Bio
+    // ==========================
+    if (req.body.bio !== undefined) {
+      user.bio = req.body.bio;
+    }
+
+    // ==========================
+    // Upload Profile Picture
+    // ==========================
+    if (req.file) {
+      const uploadResult = await new Promise((resolve, reject) => {
+        const uploadStream = cloudinary.uploader.upload_stream(
+          {
+            folder: "ideahub/profile-images",
+            resource_type: "image",
+          },
+          (error, result) => {
+            if (error) {
+              reject(error);
+            } else {
+              resolve(result);
+            }
+          }
+        );
+
+        uploadStream.end(req.file.buffer);
+      });
+
+      user.profileImage = uploadResult.secure_url;
+    }
+
+    // ==========================
+    // Save User
+    // ==========================
     await user.save();
+
+    // Don't send password back
+    const updatedUser = await User.findById(user._id).select("-password");
 
     res.json({
       message: "Profile updated successfully",
-      user,
+      user: updatedUser,
     });
-
   } catch (error) {
+    console.error("Update profile error:", error);
+
     res.status(500).json({
       message: error.message,
     });
   }
 };
+
 // ==========================
 // Get All Users
 // ==========================
 export const getAllUsers = async (req, res) => {
   try {
     const users = await User.find()
-      .select("name email")
+      .select("name email profileImage")
       .sort({ name: 1 });
 
     res.status(200).json({
@@ -65,6 +110,9 @@ export const getAllUsers = async (req, res) => {
   }
 };
 
+// ==========================
+// Follow User
+// ==========================
 export const followUser = async (req, res) => {
   try {
     const currentUserId = req.user.id;
@@ -107,6 +155,9 @@ export const followUser = async (req, res) => {
   }
 };
 
+// ==========================
+// Unfollow User
+// ==========================
 export const unfollowUser = async (req, res) => {
   try {
     const currentUserId = req.user.id;
@@ -142,10 +193,15 @@ export const unfollowUser = async (req, res) => {
   }
 };
 
+// ==========================
+// Get Followers
+// ==========================
 export const getFollowers = async (req, res) => {
   try {
-    const user = await User.findById(req.params.id)
-      .populate("followers", "name email");
+    const user = await User.findById(req.params.id).populate(
+      "followers",
+      "name email profileImage"
+    );
 
     if (!user) {
       return res.status(404).json({
@@ -161,10 +217,15 @@ export const getFollowers = async (req, res) => {
   }
 };
 
+// ==========================
+// Get Following
+// ==========================
 export const getFollowing = async (req, res) => {
   try {
-    const user = await User.findById(req.params.id)
-      .populate("following", "name email");
+    const user = await User.findById(req.params.id).populate(
+      "following",
+      "name email profileImage"
+    );
 
     if (!user) {
       return res.status(404).json({
