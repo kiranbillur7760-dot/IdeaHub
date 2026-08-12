@@ -6,10 +6,26 @@ import cloudinary from "../config/cloudinary.js";
 // ==========================
 export const getProfile = async (req, res) => {
   try {
-    const user = await User.findById(req.user._id).select("-password");
+    const userId = req.user?._id || req.user?.id;
+
+    if (!userId) {
+      return res.status(401).json({
+        message: "User authentication information is missing.",
+      });
+    }
+
+    const user = await User.findById(userId).select("-password");
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found.",
+      });
+    }
 
     res.json(user);
   } catch (error) {
+    console.error("Get profile error:", error);
+
     res.status(500).json({
       message: error.message,
     });
@@ -21,18 +37,27 @@ export const getProfile = async (req, res) => {
 // ==========================
 export const updateProfile = async (req, res) => {
   try {
-    const user = await User.findById(req.user._id);
+    // Get logged-in user's ID safely
+    const userId = req.user?._id || req.user?.id;
+
+    if (!userId) {
+      return res.status(401).json({
+        message: "User authentication information is missing.",
+      });
+    }
+
+    const user = await User.findById(userId);
 
     if (!user) {
       return res.status(404).json({
-        message: "User not found",
+        message: "User not found.",
       });
     }
 
     // ==========================
     // Update Name
     // ==========================
-    if (req.body.name) {
+    if (req.body.name !== undefined) {
       user.name = req.body.name;
     }
 
@@ -47,25 +72,35 @@ export const updateProfile = async (req, res) => {
     // Upload Profile Picture
     // ==========================
     if (req.file) {
-      const uploadResult = await new Promise((resolve, reject) => {
-        const uploadStream = cloudinary.uploader.upload_stream(
-          {
-            folder: "ideahub/profile-images",
-            resource_type: "image",
-          },
-          (error, result) => {
-            if (error) {
-              reject(error);
-            } else {
-              resolve(result);
-            }
-          }
-        );
+      const uploadResult = await new Promise(
+        (resolve, reject) => {
+          const uploadStream =
+            cloudinary.uploader.upload_stream(
+              {
+                folder: "ideahub/profile-images",
+                resource_type: "image",
+              },
+              (error, result) => {
+                if (error) {
+                  reject(error);
+                } else {
+                  resolve(result);
+                }
+              }
+            );
 
-        uploadStream.end(req.file.buffer);
-      });
+          uploadStream.end(req.file.buffer);
+        }
+      );
 
-      user.profileImage = uploadResult.secure_url;
+      if (!uploadResult?.secure_url) {
+        return res.status(500).json({
+          message: "Profile image upload failed.",
+        });
+      }
+
+      user.profileImage =
+        uploadResult.secure_url;
     }
 
     // ==========================
@@ -73,15 +108,29 @@ export const updateProfile = async (req, res) => {
     // ==========================
     await user.save();
 
-    // Don't send password back
-    const updatedUser = await User.findById(user._id).select("-password");
+    // ==========================
+    // Get Updated User
+    // Don't return password
+    // ==========================
+    const updatedUser = await User.findById(
+      user._id
+    ).select("-password");
 
-    res.json({
+    if (!updatedUser) {
+      return res.status(404).json({
+        message: "Updated user could not be found.",
+      });
+    }
+
+    res.status(200).json({
       message: "Profile updated successfully",
       user: updatedUser,
     });
   } catch (error) {
-    console.error("Update profile error:", error);
+    console.error(
+      "UPDATE PROFILE ERROR:",
+      error
+    );
 
     res.status(500).json({
       message: error.message,
@@ -102,7 +151,10 @@ export const getAllUsers = async (req, res) => {
       users,
     });
   } catch (error) {
-    console.error("Get all users error:", error);
+    console.error(
+      "Get all users error:",
+      error
+    );
 
     res.status(500).json({
       message: "Server error",
@@ -115,17 +167,37 @@ export const getAllUsers = async (req, res) => {
 // ==========================
 export const followUser = async (req, res) => {
   try {
-    const currentUserId = req.user.id;
+    const currentUserId =
+      req.user?._id || req.user?.id;
+
     const targetUserId = req.params.id;
 
-    if (currentUserId === targetUserId) {
+    if (!currentUserId) {
+      return res.status(401).json({
+        message: "User authentication information is missing.",
+      });
+    }
+
+    if (
+      currentUserId.toString() ===
+      targetUserId.toString()
+    ) {
       return res.status(400).json({
         message: "You cannot follow yourself.",
       });
     }
 
-    const currentUser = await User.findById(currentUserId);
-    const targetUser = await User.findById(targetUserId);
+    const currentUser =
+      await User.findById(currentUserId);
+
+    const targetUser =
+      await User.findById(targetUserId);
+
+    if (!currentUser) {
+      return res.status(404).json({
+        message: "Current user not found.",
+      });
+    }
 
     if (!targetUser) {
       return res.status(404).json({
@@ -133,7 +205,13 @@ export const followUser = async (req, res) => {
       });
     }
 
-    if (currentUser.following.includes(targetUserId)) {
+    if (
+      currentUser.following.some(
+        (id) =>
+          id.toString() ===
+          targetUserId.toString()
+      )
+    ) {
       return res.status(400).json({
         message: "Already following this user.",
       });
@@ -149,6 +227,8 @@ export const followUser = async (req, res) => {
       message: "User followed successfully.",
     });
   } catch (error) {
+    console.error("Follow user error:", error);
+
     res.status(500).json({
       message: error.message,
     });
@@ -160,11 +240,28 @@ export const followUser = async (req, res) => {
 // ==========================
 export const unfollowUser = async (req, res) => {
   try {
-    const currentUserId = req.user.id;
+    const currentUserId =
+      req.user?._id || req.user?.id;
+
     const targetUserId = req.params.id;
 
-    const currentUser = await User.findById(currentUserId);
-    const targetUser = await User.findById(targetUserId);
+    if (!currentUserId) {
+      return res.status(401).json({
+        message: "User authentication information is missing.",
+      });
+    }
+
+    const currentUser =
+      await User.findById(currentUserId);
+
+    const targetUser =
+      await User.findById(targetUserId);
+
+    if (!currentUser) {
+      return res.status(404).json({
+        message: "Current user not found.",
+      });
+    }
 
     if (!targetUser) {
       return res.status(404).json({
@@ -172,13 +269,19 @@ export const unfollowUser = async (req, res) => {
       });
     }
 
-    currentUser.following = currentUser.following.filter(
-      (id) => id.toString() !== targetUserId
-    );
+    currentUser.following =
+      currentUser.following.filter(
+        (id) =>
+          id.toString() !==
+          targetUserId.toString()
+      );
 
-    targetUser.followers = targetUser.followers.filter(
-      (id) => id.toString() !== currentUserId
-    );
+    targetUser.followers =
+      targetUser.followers.filter(
+        (id) =>
+          id.toString() !==
+          currentUserId.toString()
+      );
 
     await currentUser.save();
     await targetUser.save();
@@ -187,6 +290,11 @@ export const unfollowUser = async (req, res) => {
       message: "User unfollowed successfully.",
     });
   } catch (error) {
+    console.error(
+      "Unfollow user error:",
+      error
+    );
+
     res.status(500).json({
       message: error.message,
     });
@@ -198,7 +306,9 @@ export const unfollowUser = async (req, res) => {
 // ==========================
 export const getFollowers = async (req, res) => {
   try {
-    const user = await User.findById(req.params.id).populate(
+    const user = await User.findById(
+      req.params.id
+    ).populate(
       "followers",
       "name email profileImage"
     );
@@ -211,6 +321,11 @@ export const getFollowers = async (req, res) => {
 
     res.json(user.followers);
   } catch (error) {
+    console.error(
+      "Get followers error:",
+      error
+    );
+
     res.status(500).json({
       message: error.message,
     });
@@ -222,7 +337,9 @@ export const getFollowers = async (req, res) => {
 // ==========================
 export const getFollowing = async (req, res) => {
   try {
-    const user = await User.findById(req.params.id).populate(
+    const user = await User.findById(
+      req.params.id
+    ).populate(
       "following",
       "name email profileImage"
     );
@@ -235,6 +352,11 @@ export const getFollowing = async (req, res) => {
 
     res.json(user.following);
   } catch (error) {
+    console.error(
+      "Get following error:",
+      error
+    );
+
     res.status(500).json({
       message: error.message,
     });
