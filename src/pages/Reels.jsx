@@ -1,7 +1,10 @@
 import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 function Reels() {
+  const navigate = useNavigate();
+
   const [reels, setReels] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -24,7 +27,6 @@ function Reels() {
   // =========================
   // Fetch Reels
   // =========================
-
   const fetchReels = async () => {
     try {
       setLoading(true);
@@ -36,7 +38,6 @@ function Reels() {
         },
       });
 
-      // Only posts containing videos
       const videoPosts = response.data.filter(
         (post) =>
           post.video &&
@@ -46,7 +47,6 @@ function Reels() {
       setReels(videoPosts);
     } catch (error) {
       console.error("FETCH REELS ERROR:", error);
-
       setError("Unable to load reels.");
     } finally {
       setLoading(false);
@@ -56,7 +56,6 @@ function Reels() {
   // =========================
   // Initial Load
   // =========================
-
   useEffect(() => {
     if (token) {
       fetchReels();
@@ -66,34 +65,28 @@ function Reels() {
   // =========================
   // Play Active Video
   // =========================
-
   useEffect(() => {
-    videoRefs.current.forEach(
-      (video, index) => {
-        if (!video) return;
+    videoRefs.current.forEach((video, index) => {
+      if (!video) return;
 
-        if (index === activeIndex) {
-          video.currentTime = 0;
+      if (index === activeIndex) {
+        video.currentTime = 0;
 
-          video
-            .play()
-            .catch(() => {
-              console.log(
-                "Autoplay waiting for user interaction"
-              );
-            });
-        } else {
-          video.pause();
-          video.currentTime = 0;
-        }
+        video.play().catch(() => {
+          console.log(
+            "Autoplay waiting for user interaction"
+          );
+        });
+      } else {
+        video.pause();
+        video.currentTime = 0;
       }
-    );
+    });
   }, [activeIndex, reels]);
 
   // =========================
   // Like Reel
   // =========================
-
   const handleLike = async (postId) => {
     try {
       await API.post(
@@ -120,10 +113,9 @@ function Reels() {
 
       setReels(videoPosts);
 
-      const currentUser =
-        JSON.parse(
-          localStorage.getItem("user")
-        );
+      const currentUser = JSON.parse(
+        localStorage.getItem("user") || "null"
+      );
 
       if (currentUser?._id) {
         const updatedLiked = videoPosts
@@ -146,7 +138,6 @@ function Reels() {
   // =========================
   // Toggle Mute
   // =========================
-
   const toggleMute = () => {
     setMuted((previous) => !previous);
   };
@@ -154,7 +145,6 @@ function Reels() {
   // =========================
   // Touch Start
   // =========================
-
   const handleTouchStart = (event) => {
     touchStartY.current =
       event.touches[0].clientY;
@@ -163,7 +153,6 @@ function Reels() {
   // =========================
   // Touch End
   // =========================
-
   const handleTouchEnd = (event) => {
     touchEndY.current =
       event.changedTouches[0].clientY;
@@ -172,12 +161,10 @@ function Reels() {
       touchStartY.current -
       touchEndY.current;
 
-    // Swipe UP
     if (distance > 70) {
       goToNextReel();
     }
 
-    // Swipe DOWN
     if (distance < -70) {
       goToPreviousReel();
     }
@@ -186,7 +173,6 @@ function Reels() {
   // =========================
   // Next Reel
   // =========================
-
   const goToNextReel = () => {
     if (reels.length === 0) return;
 
@@ -202,7 +188,6 @@ function Reels() {
   // =========================
   // Previous Reel
   // =========================
-
   const goToPreviousReel = () => {
     if (reels.length === 0) return;
 
@@ -216,9 +201,15 @@ function Reels() {
   };
 
   // =========================
+  // Back Button
+  // =========================
+  const handleBack = () => {
+    navigate(-1);
+  };
+
+  // =========================
   // Loading
   // =========================
-
   if (loading) {
     return (
       <div className="min-h-screen bg-black text-white flex items-center justify-center">
@@ -238,12 +229,10 @@ function Reels() {
   // =========================
   // Error
   // =========================
-
   if (error) {
     return (
       <div className="min-h-screen bg-black text-white flex items-center justify-center px-6">
         <div className="text-center">
-
           <div className="text-5xl mb-4">
             😕
           </div>
@@ -258,7 +247,6 @@ function Reels() {
           >
             Try Again
           </button>
-
         </div>
       </div>
     );
@@ -267,12 +255,10 @@ function Reels() {
   // =========================
   // No Reels
   // =========================
-
   if (reels.length === 0) {
     return (
       <div className="min-h-screen bg-black text-white flex items-center justify-center px-6">
         <div className="text-center">
-
           <div className="text-6xl mb-5">
             🎥
           </div>
@@ -286,27 +272,48 @@ function Reels() {
             to create the first reel.
           </p>
 
+          {/* Back Button */}
+          <button
+            onClick={handleBack}
+            className="mt-6 px-5 py-3 bg-white text-black rounded-xl font-semibold"
+          >
+            ← Back
+          </button>
         </div>
       </div>
     );
   }
-    return (
+
+  return (
     <div
       className="fixed inset-0 bg-black text-white overflow-hidden"
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
     >
 
-      {/* ========================= */}
-      {/* Reels Header */}
-      {/* ========================= */}
+      {/* =========================
+          Top Header
+      ========================= */}
+      <div className="absolute top-0 left-0 right-0 z-50 px-5 py-4 flex items-center justify-between bg-gradient-to-b from-black/80 to-transparent">
 
-      <div className="absolute top-0 left-0 right-0 z-30 px-5 py-4 flex items-center justify-between bg-gradient-to-b from-black/70 to-transparent">
+        <div className="flex items-center gap-3">
 
-        <h1 className="text-2xl font-bold">
-          IdeaHub Reels
-        </h1>
+          {/* BACK BUTTON */}
+          <button
+            onClick={handleBack}
+            className="w-11 h-11 rounded-full bg-black/60 backdrop-blur flex items-center justify-center text-2xl hover:bg-black/80 active:scale-95 transition"
+            aria-label="Go back"
+          >
+            ←
+          </button>
 
+          <h1 className="text-2xl font-bold">
+            IdeaHub Reels
+          </h1>
+
+        </div>
+
+        {/* Mute Button */}
         <button
           onClick={toggleMute}
           className="w-11 h-11 rounded-full bg-black/50 backdrop-blur flex items-center justify-center text-xl"
@@ -316,18 +323,16 @@ function Reels() {
 
       </div>
 
-      {/* ========================= */}
-      {/* Reel Counter */}
-      {/* ========================= */}
-
+      {/* =========================
+          Reel Counter
+      ========================= */}
       <div className="absolute top-20 right-4 z-30 bg-black/50 px-3 py-1 rounded-full text-xs">
         {activeIndex + 1} / {reels.length}
       </div>
 
-      {/* ========================= */}
-      {/* Reel Feed */}
-      {/* ========================= */}
-
+      {/* =========================
+          Reel Feed
+      ========================= */}
       <div className="w-full h-full">
 
         {reels.map((reel, index) => {
@@ -336,22 +341,16 @@ function Reels() {
             reel.author?.name ||
             "IdeaHub User";
 
+          const currentUser = JSON.parse(
+            localStorage.getItem("user") || "null"
+          );
+
           const liked =
             reel.likes?.some(
-              (id) => {
-                const currentUser =
-                  JSON.parse(
-                    localStorage.getItem(
-                      "user"
-                    ) || "null"
-                  );
-
-                return (
-                  currentUser?._id &&
-                  id?.toString() ===
-                    currentUser._id.toString()
-                );
-              }
+              (id) =>
+                currentUser?._id &&
+                id?.toString() ===
+                  currentUser._id.toString()
             );
 
           return (
@@ -364,10 +363,7 @@ function Reels() {
               }`}
             >
 
-              {/* ========================= */}
               {/* Video */}
-              {/* ========================= */}
-
               <video
                 ref={(element) => {
                   videoRefs.current[index] =
@@ -382,20 +378,15 @@ function Reels() {
                 onClick={toggleMute}
               />
 
-              {/* ========================= */}
               {/* Dark Gradient */}
-              {/* ========================= */}
-
               <div className="absolute inset-0 pointer-events-none bg-gradient-to-t from-black/80 via-transparent to-black/20" />
 
-              {/* ========================= */}
-              {/* Right Actions */}
-              {/* ========================= */}
-
+              {/* =========================
+                  Right Actions
+              ========================= */}
               <div className="absolute right-4 bottom-28 z-20 flex flex-col items-center gap-5">
 
                 {/* Like */}
-
                 <button
                   onClick={() =>
                     handleLike(reel._id)
@@ -403,9 +394,7 @@ function Reels() {
                   className="flex flex-col items-center"
                 >
                   <div className="w-12 h-12 rounded-full bg-black/40 backdrop-blur flex items-center justify-center text-2xl">
-                    {liked
-                      ? "❤️"
-                      : "🤍"}
+                    {liked ? "❤️" : "🤍"}
                   </div>
 
                   <span className="text-xs mt-1 font-semibold">
@@ -414,13 +403,10 @@ function Reels() {
                 </button>
 
                 {/* Comment */}
-
                 <button
                   onClick={() => {
                     const comment =
-                      prompt(
-                        "Write a comment:"
-                      );
+                      prompt("Write a comment:");
 
                     if (
                       comment &&
@@ -456,29 +442,20 @@ function Reels() {
                   </div>
 
                   <span className="text-xs mt-1 font-semibold">
-                    {reel.comments?.length ||
-                      0}
+                    {reel.comments?.length || 0}
                   </span>
                 </button>
 
                 {/* Share */}
-
                 <button
                   onClick={async () => {
                     try {
-                      if (
-                        navigator.share
-                      ) {
-                        await navigator.share(
-                          {
-                            title:
-                              "IdeaHub Reel",
-                            text:
-                              "Check out this reel on IdeaHub!",
-                            url:
-                              reel.video,
-                          }
-                        );
+                      if (navigator.share) {
+                        await navigator.share({
+                          title: "IdeaHub Reel",
+                          text: "Check out this reel on IdeaHub!",
+                          url: reel.video,
+                        });
                       } else {
                         await navigator.clipboard.writeText(
                           reel.video
@@ -507,16 +484,14 @@ function Reels() {
 
               </div>
 
-              {/* ========================= */}
-              {/* Bottom User Information */}
-              {/* ========================= */}
-
+              {/* =========================
+                  Bottom User Information
+              ========================= */}
               <div className="absolute bottom-8 left-5 right-20 z-20">
 
                 <div className="flex items-center gap-3 mb-3">
 
                   {/* Avatar */}
-
                   <div className="w-11 h-11 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center font-bold text-lg">
                     {authorName
                       .charAt(0)
@@ -524,7 +499,6 @@ function Reels() {
                   </div>
 
                   {/* Name */}
-
                   <div>
                     <h3 className="font-bold">
                       {authorName}
@@ -540,7 +514,6 @@ function Reels() {
                 </div>
 
                 {/* Caption */}
-
                 {reel.text && (
                   <p className="text-sm leading-6 line-clamp-3">
                     {reel.text}
@@ -555,10 +528,9 @@ function Reels() {
 
       </div>
 
-      {/* ========================= */}
-      {/* Swipe Instructions */}
-      {/* ========================= */}
-
+      {/* =========================
+          Swipe Instructions
+      ========================= */}
       {activeIndex === 0 && (
         <div className="absolute bottom-2 left-1/2 -translate-x-1/2 z-40 text-xs text-gray-300 animate-pulse">
           ↑ Swipe up for next reel
